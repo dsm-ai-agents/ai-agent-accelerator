@@ -1,0 +1,497 @@
+{
+  "name": "[In Class] WhatsApp Lead Qualification Agent - 21 SEP 2025",
+  "nodes": [
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "a8ac031f-73bd-4e49-b6d3-c7182e89c9b7",
+              "leftValue": "={{ $json.output.conversation_status }}",
+              "rightValue": "complete",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        1040,
+        400
+      ],
+      "id": "57083f6a-5065-4e28-afae-f4d5f1fac93b",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "jsonSchemaExample": "{\n  \"message\": \"Hi there! What's your name?\",\n  \"conversation_status\": \"ongoing\",\n  \"name\": \"John Doe\",\n  \"email\": \"john@example.com\",\n  \"budget\": \"B) $1K-$5K\",\n  \"timeline\": \"A) This month\",\n  \"authority\": \"A) Yes, I decide\",\n  \"lead_type\": \"HOT LEAD\",\n  \"score\": 8,\n  \"reasoning\": \"Good budget and timeline\",\n  \"next_steps\": \"Call within 24 hours\"\n}",
+        "autoFix": true
+      },
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.3,
+      "position": [
+        560,
+        368
+      ],
+      "id": "64f4f58a-fb8b-4a1f-9ccd-953705c2eeca",
+      "name": "Structured Output Parser"
+    },
+    {
+      "parameters": {
+        "sessionIdType": "customKey",
+        "sessionKey": "={{ $('WhatsApp Trigger1').item.json.metadata.phone_number_id }}",
+        "contextWindowLength": 20
+      },
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.3,
+      "position": [
+        320,
+        368
+      ],
+      "id": "05c6b903-e8da-46e0-bff7-b4ed35edbd15",
+      "name": "Simple Memory"
+    },
+    {
+      "parameters": {
+        "content": "## System 1 - Capture Lead Details",
+        "height": 784,
+        "width": 880
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        0,
+        0
+      ],
+      "typeVersion": 1,
+      "id": "d24ae9c6-bace-44a6-9ba3-9402e9421277",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "content": "## System 2 - Store & Score Leads",
+        "height": 784,
+        "width": 880
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        896,
+        0
+      ],
+      "typeVersion": 1,
+      "id": "8d30c778-8d07-40d0-b687-81c85e1d80d1",
+      "name": "Sticky Note1"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        640,
+        576
+      ],
+      "id": "2b7d05c6-586b-4aa3-994d-4db8b74a9896",
+      "name": "gemini-2.5-flah",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "IC7bpNow8oxUbK78",
+          "name": "KN DSM Google Gemini(PaLM) Api"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        160,
+        368
+      ],
+      "id": "f122bd98-f87d-4412-af1f-f78504e7fa6a",
+      "name": "gemini-2.5-flah1",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "IC7bpNow8oxUbK78",
+          "name": "KN DSM Google Gemini(PaLM) Api"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1XU21uNYJZKc8DWo7mqFJvl06o5LEmGN7vNIh_4WuwLg",
+          "mode": "list",
+          "cachedResultName": "[AIAA] Telegram Lead Qualification Agent",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1XU21uNYJZKc8DWo7mqFJvl06o5LEmGN7vNIh_4WuwLg/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1ZRzL3BlYS_oxWerBhlJgngZFQicCq4f5N3tzN2lY1N4/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Name": "={{ $json.output.name }}",
+            "Email": "={{ $json.output.email }}",
+            "Budget": "={{ $json.output.budget }}",
+            "Timeline": "={{ $json.output.timeline }}",
+            "Decision Maker": "={{ $json.output.authority }}",
+            "Lead type": "={{ $json.output.lead_type }}",
+            "Score": "={{ $json.output.score }}",
+            "Reasoning": "={{ $json.output.reasoning }}",
+            "Next Steps": "={{ $json.output.next_steps }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "Name",
+              "displayName": "Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Email",
+              "displayName": "Email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Budget",
+              "displayName": "Budget",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Timeline",
+              "displayName": "Timeline",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Decision Maker",
+              "displayName": "Decision Maker",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Lead type",
+              "displayName": "Lead type",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Score",
+              "displayName": "Score",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Reasoning",
+              "displayName": "Reasoning",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Next Steps",
+              "displayName": "Next Steps",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        1296,
+        320
+      ],
+      "id": "f12e140d-8f5d-4fdf-86d9-28d5bebc2bb1",
+      "name": "Append row in sheet1",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "50DCmt1movthIA5n",
+          "name": "KN DSM Public Google Sheets"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "send",
+        "phoneNumberId": "715780051627972",
+        "recipientPhoneNumber": "={{ $('WhatsApp Trigger1').item.json.messages[0].from }}",
+        "textBody": "={{ $json.output.message }}",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.whatsApp",
+      "typeVersion": 1,
+      "position": [
+        1344,
+        544
+      ],
+      "id": "6b167812-7600-4aaf-b9ff-0dedd3675bf7",
+      "name": "Send message",
+      "webhookId": "3f5c0175-b4c0-44eb-b079-d38b0cec697f",
+      "credentials": {
+        "whatsAppApi": {
+          "id": "5Logt3sDwqLtytTk",
+          "name": "KN Send Message API - 21 Aug 2025"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "send",
+        "phoneNumberId": "715780051627972",
+        "recipientPhoneNumber": "={{ $('WhatsApp Trigger1').item.json.messages[0].from }}",
+        "textBody": "We will contact you shortly",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.whatsApp",
+      "typeVersion": 1,
+      "position": [
+        1552,
+        320
+      ],
+      "id": "3b603b3a-7aeb-4df8-b37a-02ab09a7338f",
+      "name": "Send message1",
+      "webhookId": "7bf4b977-f961-4301-ac83-29450e38bac1",
+      "credentials": {
+        "whatsAppApi": {
+          "id": "5Logt3sDwqLtytTk",
+          "name": "KN Send Message API - 21 Aug 2025"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=You are a friendly sales assistant collecting lead information via Telegram and qualifying leads using BANT criteria.\nCURRENT USER MESSAGE: {{ $json.messages[0].text.body }}\nUSER NAME: {{ $json.contacts[0].profile.name }}\nANALYZE MEMORY:\nCheck if you already have: name, email, budget, timeline, authority from previous messages.\nCONVERSATION FLOW:\n\nIf no name in memory → Ask: \"Hi {{ $json.contacts[0].profile.name }}! I'm here to help you learn about our AI services. What's your email address?\"\nIf have name but no email → Ask: \"What's your email address?\"\nIf have email but no budget → Ask: \"What's your budget range for AI automation?\nA) Under $1,000/month\nB) $1,000-$5,000/month\nC) $5,000+/month\nD) Not sure yet\"\nIf have budget but no timeline → Ask: \"When are you looking to get started?\nA) This month\nB) Next 2-3 months\nC) Later this year\nD) Just exploring\"\nIf have timeline but no authority → Ask: \"Can you make the buying decision for your company?\nA) Yes, I decide\nB) I decide with others\nC) I need approval\nD) Just gathering info\"\nIf have ALL info → \"Thanks! We've got everything. Someone will reach out soon.\"\n\nEXTRACT FULL RESPONSES (not just letters):\n\nBudget: Convert A→\"Under $1,000/month\", B→\"$1,000-$5,000/month\", C→\"$5,000+/month\", D→\"Not sure yet\"\nTimeline: Convert A→\"This month\", B→\"Next 2-3 months\", C→\"Later this year\", D→\"Just exploring\"\nAuthority: Convert A→\"Yes, I decide\", B→\"I decide with others\", C→\"I need approval\", D→\"Just gathering info\"\n\nRESPONSE FORMAT:\nIf missing any info:\n{\n\"message\": \"your next question\",\n\"conversation_status\": \"ongoing\",\n\"name\": \"{{ $json.contacts[0].profile.name }}\",\n\"email\": \"extracted email or empty\",\n\"budget\": \"full budget text or empty\",\n\"timeline\": \"full timeline text or empty\",\n\"authority\": \"full authority text or empty\"\n}\nIf have ALL 5 fields:\n{\n\"message\": \"Thanks! We've got everything. Someone will reach out soon.\",\n\"conversation_status\": \"complete\",\n\"name\": \"{{ $json.contacts[0].profile.name }}\",\n\"email\": \"email address\",\n\"budget\": \"Under $1,000/month\",\n\"timeline\": \"This month\",\n\"authority\": \"Yes, I decide\",\n\"lead_type\": \"Analyze and determine: HOT LEAD, WARM LEAD, or COLD LEAD\",\n\"score\": \"Rate 1-10 based on BANT qualification: Budget adequacy (0-3 points), Authority level (0-3 points), Need urgency from timeline (0-2 points), Timeline immediacy (0-2 points)\",\n\"reasoning\": \"Provide detailed analysis of why this score was assigned based on budget size, decision-making authority, timeline urgency, and overall qualification strength\",\n\"next_steps\": \"Recommend specific actions based on the lead score and profile - immediate contact for hot leads, nurturing sequence for warm leads, or long-term follow-up for cold leads\"\n}\nResponse:",
+        "hasOutputParser": true,
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2.2,
+      "position": [
+        368,
+        96
+      ],
+      "id": "80d7ab96-2ed0-4745-af18-22afdffccd16",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "updates": [
+          "messages"
+        ],
+        "options": {}
+      },
+      "type": "n8n-nodes-base.whatsAppTrigger",
+      "typeVersion": 1,
+      "position": [
+        128,
+        96
+      ],
+      "id": "e32b410a-a3da-4933-a671-0ac4a12fcc42",
+      "name": "WhatsApp Trigger1",
+      "webhookId": "8c5e6970-5016-4f16-950e-bf54c9e9734d",
+      "credentials": {
+        "whatsAppTriggerApi": {
+          "id": "zlX0Me1Egkumaay4",
+          "name": "KN AI Agent - n8n - 21 Aug 2025"
+        }
+      }
+    }
+  ],
+  "pinData": {
+    "WhatsApp Trigger1": [
+      {
+        "json": {
+          "messaging_product": "whatsapp",
+          "metadata": {
+            "display_phone_number": "15551770802",
+            "phone_number_id": "715780051627972"
+          },
+          "contacts": [
+            {
+              "profile": {
+                "name": "Kunaal"
+              },
+              "wa_id": "919535508399"
+            }
+          ],
+          "messages": [
+            {
+              "from": "919535508399",
+              "id": "wamid.HBgMOTE5NTM1NTA4Mzk5FQIAEhgUM0Y0QUE5NDRFOTA5RTU5RUM2RTgA",
+              "timestamp": "1758474014",
+              "text": {
+                "body": "hi"
+              },
+              "type": "text"
+            }
+          ],
+          "field": "messages"
+        }
+      }
+    ]
+  },
+  "connections": {
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Append row in sheet1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Send message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Structured Output Parser": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Simple Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "gemini-2.5-flah": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Structured Output Parser",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "gemini-2.5-flah1": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Append row in sheet1": {
+      "main": [
+        [
+          {
+            "node": "Send message1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "WhatsApp Trigger1": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "f24245bb-75ff-4ba8-9b39-1fd95ede3156",
+  "meta": {
+    "instanceId": "a39925a189fc4958777cfbc2ee952f96a625e56b8dde120f89d58a7cdacf694a"
+  },
+  "id": "HGLjEwiRspmLcVEW",
+  "tags": []
+}

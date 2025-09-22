@@ -1,0 +1,133 @@
+{
+  "name": "[In Class] Telegram API - 21 SEP 2025",
+  "nodes": [
+    {
+      "parameters": {
+        "updates": [
+          "message"
+        ],
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegramTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        0,
+        0
+      ],
+      "id": "16821ac9-d07e-4ffb-bdb0-75e16c8a3b4b",
+      "name": "Telegram Trigger",
+      "webhookId": "71255611-a003-4d4d-88d1-0d2e7682a377",
+      "credentials": {
+        "telegramApi": {
+          "id": "LIyOkN52pUsWEEWo",
+          "name": "DSM Lead Qual Telegram Agent - 21 Sep 2025"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.message.text }}",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2.2,
+      "position": [
+        208,
+        0
+      ],
+      "id": "53c8ae85-8c31-480b-a097-bc7056c658be",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        80,
+        208
+      ],
+      "id": "2dd69261-3afa-4815-acc2-535e4cfc6d05",
+      "name": "Google Gemini Chat Model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "IC7bpNow8oxUbK78",
+          "name": "KN DSM Google Gemini(PaLM) Api"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Telegram Trigger').item.json.message.chat.id }}",
+        "text": "={{ $json.output }}",
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        560,
+        0
+      ],
+      "id": "ec816539-458c-49fe-8e13-44f2d2d4f685",
+      "name": "Send a text message",
+      "webhookId": "096c2e4a-2cde-4873-a8e1-8513ee13adb0",
+      "credentials": {
+        "telegramApi": {
+          "id": "LIyOkN52pUsWEEWo",
+          "name": "DSM Lead Qual Telegram Agent - 21 Sep 2025"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Telegram Trigger": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Send a text message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "098d8248-e3c7-4fae-a023-bde9df1d7fe2",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "a39925a189fc4958777cfbc2ee952f96a625e56b8dde120f89d58a7cdacf694a"
+  },
+  "id": "BfpkJjDrTfPZLhYy",
+  "tags": []
+}
