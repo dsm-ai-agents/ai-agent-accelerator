@@ -1,0 +1,418 @@
+{
+  "name": "[Template] LinkedIn Content AI Agent - Human in the Loop using chat v1 - 9 OCT 2025",
+  "nodes": [
+    {
+      "parameters": {
+        "jsCode": "const items = $input.all();\n\nreturn items.map((item) => {\n  let raw = item.json.output || '';\n  \n  // Remove triple backticks and markdown markers\n  raw = raw.replace(/```json|```/g, '').trim();\n  \n  // Find and isolate valid JSON portion\n  const start = raw.indexOf('{');\n  const end = raw.lastIndexOf('}') + 1;\n  \n  if (start === -1 || end <= start) {\n    return {\n      json: {\n        post: '⚠️ No valid JSON found in AI output.',\n      },\n    };\n  }\n  \n  const jsonString = raw.slice(start, end);\n  \n  try {\n    // Parse JSON\n    const parsed = JSON.parse(jsonString);\n    \n    if (!parsed.post) {\n      return {\n        json: {\n          post: '⚠️ Post missing from AI output.',\n        },\n      };\n    }\n    \n    // Fix formatting: convert escaped newlines to actual newlines\n    // Handle both \\\\n\\\\n and \\n patterns\n    let formattedPost = parsed.post\n      .replace(/\\\\n\\\\n/g, '\\n\\n')  // Convert \\\\n\\\\n to actual double newlines\n      .replace(/\\\\n/g, '\\n')       // Convert remaining \\\\n to single newlines\n      .trim();\n    \n    return {\n      json: {\n        post: formattedPost,\n      },\n    };\n  } catch (e) {\n    // Enhanced error logging for debugging\n    console.log('Parse error:', e.message);\n    console.log('JSON string:', jsonString);\n    \n    return {\n      json: {\n        post: '⚠️ Error parsing AI output.',\n      },\n    };\n  }\n});"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        368,
+        128
+      ],
+      "id": "d4bdc995-9d2b-407c-ab97-7e2ebbb501b6",
+      "name": "Code"
+    },
+    {
+      "parameters": {
+        "operation": "sendAndWait",
+        "sendTo": "<use the email id to receive the content for approval>",
+        "subject": "Approval for LinkedIn Post",
+        "message": "=Input Idea:\n{{ $('When chat message received').item.json.chatInput }}\n----------\nAI Generated Post:\n{{ $json.post }}\n\n\n\n\n\n",
+        "responseType": "customForm",
+        "formFields": {
+          "values": [
+            {
+              "fieldLabel": "Confirm  Content?",
+              "fieldType": "dropdown",
+              "fieldOptions": {
+                "values": [
+                  {
+                    "option": "Yes"
+                  },
+                  {
+                    "option": "No"
+                  }
+                ]
+              },
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Any Changes?",
+              "fieldType": "textarea"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "c300a94c-5419-4cc2-8493-7a253469be18",
+      "name": "Send Content Confirmation",
+      "type": "n8n-nodes-base.gmail",
+      "position": [
+        624,
+        -32
+      ],
+      "webhookId": "20ef5614-435d-4e7b-bd76-9ebbaebde641",
+      "typeVersion": 2.1,
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "VE9KNPMk3lADVzhf",
+          "name": "KN DSM Public Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "version": 2,
+                  "leftValue": "",
+                  "caseSensitive": true,
+                  "typeValidation": "strict"
+                },
+                "combinator": "and",
+                "conditions": [
+                  {
+                    "id": "99ec185e-80ac-451d-bb69-662f84a7cf52",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "leftValue": "={{ $json.data['Confirm  Content?'] }}",
+                    "rightValue": "Yes"
+                  }
+                ]
+              },
+              "renameOutput": true,
+              "outputKey": "Yes"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "version": 2,
+                  "leftValue": "",
+                  "caseSensitive": true,
+                  "typeValidation": "strict"
+                },
+                "combinator": "and",
+                "conditions": [
+                  {
+                    "id": "77031007-a912-4b9b-9cca-846c57ffaec8",
+                    "operator": {
+                      "name": "filter.operator.equals",
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "leftValue": "={{ $json.data['Confirm  Content?'] }}",
+                    "rightValue": "No"
+                  }
+                ]
+              },
+              "renameOutput": true,
+              "outputKey": "No"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "aee0326b-2585-40a8-9ea5-08d9d1c4473d",
+      "name": "Content Confirmation Logic",
+      "type": "n8n-nodes-base.switch",
+      "position": [
+        848,
+        -32
+      ],
+      "typeVersion": 3.2
+    },
+    {
+      "parameters": {
+        "person": "NPCAIhpTYl",
+        "text": "={{ $('Code').item.json.post }}",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.linkedIn",
+      "typeVersion": 1,
+      "position": [
+        1136,
+        -48
+      ],
+      "id": "e4f9d31d-05ed-40fb-9608-188939b462bf",
+      "name": "Create a post",
+      "credentials": {
+        "linkedInOAuth2Api": {
+          "id": "vS76iLACmdYB5Anj",
+          "name": "KN LinkedIn account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        -208,
+        128
+      ],
+      "id": "db184e00-9f8a-47d8-b86f-569c9e6b6137",
+      "name": "When chat message received",
+      "webhookId": "638a7086-b7e6-4556-8d63-87f13e613423"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        96,
+        352
+      ],
+      "id": "7fee87b1-39e7-462f-9be9-a8005b9c8f12",
+      "name": "gemini-2.5-flash",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "IC7bpNow8oxUbK78",
+          "name": "KN DSM Google Gemini(PaLM) Api"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        672,
+        512
+      ],
+      "id": "8c6d3486-b41d-4579-b10d-aa1993c24764",
+      "name": "gemini-2.5-flash1",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "IC7bpNow8oxUbK78",
+          "name": "KN DSM Google Gemini(PaLM) Api"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {
+          "systemMessage": "You are a LinkedIn content writer. You will be given a topic and your task is to create an engaging LinkedIn post based on that title.\nYour post should:\n1. Begin with a compelling hook related to the title\n2. Then Write a Agitate line \n3. Write short one liners, easy to read and grasp\n4. End it with a Call to Action should be compelling them to comment\n5. Use appropriate emojis as needed\n6. Also add my related details at the end\n\nImportant formatting requirements:\n- Format all paragraphs with proper newline characters (\\n\\n) between them\n- Ensure the text is properly escaped for JSON\n- Do not use double quote (\"\") in response or any special character\n- Do not put asterisk\n- Keep the overall length appropriate for LinkedIn (under 3000 characters)\n\nCRITICAL: Return your response as clean JSON only in this exact format, without any markdown code blocks or formatting:\n{\"post\": \"your LinkedIn post content here\"}\n\nDo NOT wrap the JSON in ```json ``` blocks. Return only the raw JSON object.\n\nNow, create a LinkedIn post\n\n## Here is a sample post I write. \nMost leaders I meet still think of automation as “nice-to-have.”\nSomething you add once the team is big enough.\n\nBut the reality in 2025?\nAutomation isn’t a bonus.\n\nIt’s the operating system behind every modern business.\nn8n is one of those rare tools that flips the equation.\n\nYou don’t ask: “What can I automate?”\nYou ask: “What should humans still be doing manually?”\n\nHere’s the shift most miss 👀\n\n#1 It’s not about single workflows\nSure, enriching leads or processing invoices saves time.\n\n\nBut when you connect 10, 20, 50 workflows into an ecosystem, you start creating a digital workforce.\n\n\nEvery agent handles a slice of work → together they replicate entire departments.\n\n#2 Automation isn’t just cost savings\nThe bigger win is speed to opportunity.\n\n\n– Your SDR gets a lead 5 minutes after they engage with a competitor.\n– Your marketer sees a campaign report by 9am instead of waiting for an intern to compile data.\n– Your support rep enters calls with every customer insight preloaded.\n\n\nFaster decisions = faster revenue.\n\n#3 The compounding effect is real\nEvery automated task frees bandwidth.\nThat bandwidth reinvests into strategy, experiments, and growth.\n\n\nWhich produces more wins… and more things worth automating.\nThis flywheel is why small teams using n8n can look like they’re running Fortune 500 ops.\n\n#4 Orchestration > tools\nBuying “yet another AI tool” won’t fix messy processes.\nn8n gives you a way to unify the stack: CRMs, finance tools, HR systems, marketing platforms.\n\n\nIt’s the hub that makes sure nothing falls between the cracks.\n\n#5 This is how real businesses scale\nAutomation isn’t about replacing people.\n\n\nIt’s about redeploying talent from grunt work → to creative, strategic, human problems.\n\n\nThe companies who get this right will move like they’ve doubled headcount, without doubling payroll.\n\nSo when I share automations in n8n, I’m not just showing off “cool tricks.”\nI’m showing the blueprint for how businesses will operate in the next 2–3 years.\n\nBecause the gap between businesses that adopt this and those that don’t? \nIt won’t just be efficiency.\nIt’ll be survival.\n.\n.\n.\n♻️ Follow Kunaal Naik for real-world agent frameworks, n8n workflows, and automation playbooks you can deploy right now.\n\n@KunaalNaik"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.8,
+      "position": [
+        16,
+        128
+      ],
+      "id": "a5b3288a-e6ed-4148-b047-8e13ac7016fb",
+      "name": "LinkedIn Content Creator Agent"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=You are a professional content editor and social media strategist.\nYour task is to refine and finalize a LinkedIn post that has already been drafted and reviewed. Ensure the content is:\n\nClear, concise, and engaging for a professional audience\n\nWritten in a tone that reflects industry credibility and thought leadership\n\nOptimized for LinkedIn with a strong opening hook, readable structure, and a clear call to action (CTA), if applicable\n\nGrammatically correct and free from jargon or filler\n\nIf the content references an image or visual asset, make sure the text complements it naturally.\n\nDo not change the core message or facts—focus on enhancing tone, clarity, and impact.\n\nInput:\n{{ $('Code').item.json.post }}\n\nMake changes as per these instructions:  {{ $('Send Content Confirmation').item.json.data['Any Changes?'] }}\n\nJust give the post only. Not pre or post commentary. Also do not post it as Markdown as Linkedin does not use the characters. ",
+        "hasOutputParser": true,
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.8,
+      "position": [
+        736,
+        320
+      ],
+      "id": "78bf9c51-81b9-453e-82a4-d6dc2f1958f6",
+      "name": "LinkedIn Content Re Draft Agent"
+    },
+    {
+      "parameters": {
+        "person": "NPCAIhpTYl",
+        "text": "={{ $json.output }}",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.linkedIn",
+      "typeVersion": 1,
+      "position": [
+        1088,
+        320
+      ],
+      "id": "2afd7944-c718-44d9-9b32-e554c4fb50da",
+      "name": "Create a post1",
+      "credentials": {
+        "linkedInOAuth2Api": {
+          "id": "vS76iLACmdYB5Anj",
+          "name": "KN LinkedIn account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "## System 1 - Content AI Agent\n- Creates the first draft of post",
+        "height": 528,
+        "width": 784
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -256,
+        -32
+      ],
+      "typeVersion": 1,
+      "id": "c4b233c2-d94e-48c3-9061-168bcf5e2875",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "content": "## System 2 - If No Changes - then Posts in LinkedIn ",
+        "height": 384,
+        "width": 784
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        544,
+        -160
+      ],
+      "typeVersion": 1,
+      "id": "4a3f475d-6daf-4fc6-9ab5-abc4b0015cf5",
+      "name": "Sticky Note1"
+    },
+    {
+      "parameters": {
+        "content": "## System 3 - If HAS Changes - Re Writes and posts ",
+        "height": 400,
+        "width": 784
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        544,
+        240
+      ],
+      "typeVersion": 1,
+      "id": "bbac0362-0af3-403a-91ab-98f1f5eec77f",
+      "name": "Sticky Note2"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Code": {
+      "main": [
+        [
+          {
+            "node": "Send Content Confirmation",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send Content Confirmation": {
+      "main": [
+        [
+          {
+            "node": "Content Confirmation Logic",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Content Confirmation Logic": {
+      "main": [
+        [
+          {
+            "node": "Create a post",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "LinkedIn Content Re Draft Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create a post": {
+      "main": [
+        []
+      ]
+    },
+    "When chat message received": {
+      "main": [
+        [
+          {
+            "node": "LinkedIn Content Creator Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "gemini-2.5-flash": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "LinkedIn Content Creator Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "gemini-2.5-flash1": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "LinkedIn Content Re Draft Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "LinkedIn Content Creator Agent": {
+      "main": [
+        [
+          {
+            "node": "Code",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "LinkedIn Content Re Draft Agent": {
+      "main": [
+        [
+          {
+            "node": "Create a post1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "timezone": "Asia/Dubai",
+    "callerPolicy": "workflowsFromSameOwner"
+  },
+  "versionId": "28e04d37-cdee-4817-b989-d22eb32b3aeb",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "a39925a189fc4958777cfbc2ee952f96a625e56b8dde120f89d58a7cdacf694a"
+  },
+  "id": "Eouz9StXnuoArwUy",
+  "tags": []
+}
