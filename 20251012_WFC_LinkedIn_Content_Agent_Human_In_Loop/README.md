@@ -1,4 +1,3 @@
-````markdown
 # 🧠 LinkedIn Content AI Agent (Human-in-the-Loop Workflow)
 
 This repository contains the complete **LinkedIn Content AI Agent** workflow built on **n8n**, enabling human-in-the-loop LinkedIn content generation and posting.  
@@ -48,9 +47,10 @@ Starts the workflow when a chat message (idea/topic) is received.
 #### 2. **AI Agent: Content Creator**
 **Name:** `LinkedIn Content Creator Agent`  
 **Model:** `gemini-2.5-flash`  
+
 Uses the following **system message**:
 
-```markdown
+'''
 You are a LinkedIn content writer. You will be given a topic and your task is to create an engaging LinkedIn post based on that title.
 Your post should:
 1. Begin with a compelling hook related to the title
@@ -74,7 +74,7 @@ Do NOT wrap the JSON in ```json ``` blocks. Return only the raw JSON object.
 
 Now, create a LinkedIn post
 
-## Here is a sample post I write. 
+<sample>
 Most leaders I meet still think of automation as “nice-to-have.”
 Something you add once the team is big enough.
 
@@ -139,13 +139,7 @@ I’m showing the blueprint for how businesses will operate in the next 2–3 ye
 Because the gap between businesses that adopt this and those that don’t? 
 It won’t just be efficiency.
 It’ll be survival.
-.
-.
-.
-♻️ Follow Kunaal Naik for real-world agent frameworks, n8n workflows, and automation playbooks you can deploy right now.
-
-@KunaalNaik
-````
+</sample>
 
 ---
 
