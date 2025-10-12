@@ -50,7 +50,7 @@ Starts the workflow when a chat message (idea/topic) is received.
 
 Uses the following **system message**:
 
-'''
+'''python
 You are a LinkedIn content writer. You will be given a topic and your task is to create an engaging LinkedIn post based on that title.
 Your post should:
 1. Begin with a compelling hook related to the title
@@ -140,6 +140,7 @@ Because the gap between businesses that adopt this and those that don’t?
 It won’t just be efficiency.
 It’ll be survival.
 </sample>
+'''python
 
 ---
 
