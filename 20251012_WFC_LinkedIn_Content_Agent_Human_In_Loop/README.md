@@ -148,6 +148,67 @@ It’ll be survival.
 
 Cleans up the AI output to extract the valid JSON (`{ "post": "..." }`) and remove unwanted formatting.
 
+```
+const items = $input.all();
+
+return items.map((item) => {
+  let raw = item.json.output || '';
+  
+  // Remove triple backticks and markdown markers
+  raw = raw.replace(/```json|```/g, '').trim();
+  
+  // Find and isolate valid JSON portion
+  const start = raw.indexOf('{');
+  const end = raw.lastIndexOf('}') + 1;
+  
+  if (start === -1 || end <= start) {
+    return {
+      json: {
+        post: '⚠️ No valid JSON found in AI output.',
+      },
+    };
+  }
+  
+  const jsonString = raw.slice(start, end);
+  
+  try {
+    // Parse JSON
+    const parsed = JSON.parse(jsonString);
+    
+    if (!parsed.post) {
+      return {
+        json: {
+          post: '⚠️ Post missing from AI output.',
+        },
+      };
+    }
+    
+    // Fix formatting: convert escaped newlines to actual newlines
+    // Handle both \\n\\n and \n patterns
+    let formattedPost = parsed.post
+      .replace(/\\n\\n/g, '\n\n')  // Convert \\n\\n to actual double newlines
+      .replace(/\\n/g, '\n')       // Convert remaining \\n to single newlines
+      .trim();
+    
+    return {
+      json: {
+        post: formattedPost,
+      },
+    };
+  } catch (e) {
+    // Enhanced error logging for debugging
+    console.log('Parse error:', e.message);
+    console.log('JSON string:', jsonString);
+    
+    return {
+      json: {
+        post: '⚠️ Error parsing AI output.',
+      },
+    };
+  }
+});
+```
+
 #### 4. **Gmail Node: Send Content Confirmation**
 
 Sends the generated post for manual review and collects:
