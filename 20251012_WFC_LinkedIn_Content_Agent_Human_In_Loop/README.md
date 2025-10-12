@@ -140,7 +140,7 @@ Because the gap between businesses that adopt this and those that don’t?
 It won’t just be efficiency.
 It’ll be survival.
 </sample>
-```python
+```
 
 ---
 
