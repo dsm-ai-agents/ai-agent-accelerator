@@ -211,11 +211,3 @@ Once configured, your AI Agent will:
 
 1. Generate a post → 2. Request approval → 3. Auto-publish or re-edit → 4. Post to LinkedIn.
 
----
-
-**Maintained by:** [@KunaalNaik](https://www.linkedin.com/in/kunaalnaik)
-**Version:** `v1.0 - October 2025`
-**Tool Stack:** n8n + Google Gemini + Gmail + LinkedIn API
-
-```
-```
