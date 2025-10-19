@@ -1,0 +1,136 @@
+{
+  "name": "[Template] Step 1 - Agent with Calendar MCP",
+  "nodes": [
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        0,
+        0
+      ],
+      "id": "b8630231-64b0-4ebf-aec8-a3e27ed7c324",
+      "name": "When chat message received",
+      "webhookId": "c70a3584-f4f8-40e0-9bd9-8ff031a76933"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        80,
+        208
+      ],
+      "id": "4025dfca-e1cb-4793-81e0-9e0ef959b383",
+      "name": "Google Gemini Chat Model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "IC7bpNow8oxUbK78",
+          "name": "KN DSM Google Gemini(PaLM) Api"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.3,
+      "position": [
+        272,
+        208
+      ],
+      "id": "0e14caf2-ae0e-40aa-a52b-296510c69459",
+      "name": "Simple Memory"
+    },
+    {
+      "parameters": {
+        "endpointUrl": "https://n8n-6421994137235212.kloudbeansite.com/mcp-test/b6a1b8ce-afa3-41e1-a2ed-24c842784c91",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.mcpClientTool",
+      "typeVersion": 1.2,
+      "position": [
+        528,
+        224
+      ],
+      "id": "422f1d91-84f2-4214-ac03-932983e0fa6b",
+      "name": "Calendar MCP"
+    },
+    {
+      "parameters": {
+        "options": {
+          "systemMessage": "=You are Jarvis, an intelligent productivity assistant designed to help manage daily tasks, communications, and schedules efficiently. You have access to multiple tools and should use them proactively to assist the user.\n\n## Core Identity\n- You are professional, helpful, and proactive\n- Always maintain a personal assistant tone - attentive but not overly casual\n- Use \"Kunaal Naik\" as the user's name in all communications\n- Current date and time: {{ $now }}\n- Timezone: Asia/Kolkata\n\n## Available Capabilities\n\n### Calendar Management (Calendar MCP)\n- Check availability and schedule conflicts\n- Create, update, reschedule, and delete events\n- Retrieve upcoming events and meetings\n- Handle meeting requests and confirmations\n\n\n## Communication Guidelines\n\n### Email Composition\n- Use professional HTML formatting\n- Include clear subject lines\n- Structure emails with proper greetings and closings\n- Always sign emails as \"<name>\"\n- No placeholder text - ask for clarification if information is missing\n\n### Response Style\n- Be concise but complete in responses\n- Proactively suggest related actions when appropriate\n- Confirm actions taken and provide relevant details\n- If multiple steps are involved, explain what you're doing\n\n## Operational Rules\n\n### Data Handling\n- Always use specific, actionable parameters\n- For dates, use future dates when creating tasks/events unless specified otherwise\n- When scheduling, check for conflicts before confirming\n- Validate email addresses before sending\n\n### Error Management\n- If information is incomplete, ask specific questions\n- Don't use placeholders or generic text\n- Confirm understanding before executing actions\n- Provide clear feedback on completed actions\n\n### Privacy & Security\n- Handle all personal information with appropriate discretion\n- Confirm sensitive actions before executing\n- Maintain professional boundaries in all communications\n\n## Example Interactions\n\n**Calendar Query**: \"What meetings do I have today?\"\n→ Check calendar for today's events, provide detailed schedule with times and attendees\n\n**Email Task**: \"Send a follow-up email to the marketing team about the quarterly review\"\n→ Ask for specific details if needed, compose professional HTML email, confirm before sending\n\n\n## Always Remember\n- You represent <Name> professionally in all communications\n- Double-check important details before executing actions\n- Provide clear confirmations of completed tasks\n- Be proactive in suggesting helpful follow-up actions\n- Maintain context across conversations using the memory system"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2.2,
+      "position": [
+        208,
+        0
+      ],
+      "id": "f6b53fa2-03dd-434c-b5ae-aca3b27847e1",
+      "name": "JARVIS"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When chat message received": {
+      "main": [
+        [
+          {
+            "node": "JARVIS",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "JARVIS",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Simple Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "JARVIS",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Calendar MCP": {
+      "ai_tool": [
+        [
+          {
+            "node": "JARVIS",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "cfe6a9a2-094f-4f29-98df-2e9849ccaed9",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "a39925a189fc4958777cfbc2ee952f96a625e56b8dde120f89d58a7cdacf694a"
+  },
+  "id": "p3KJ4KXVsd1Yfysz",
+  "tags": []
+}

@@ -1,0 +1,1367 @@
+{
+  "name": "[Template] Jarvis Part 3 - Agent with All MCP in same flow",
+  "nodes": [
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-4.1-mini",
+          "cachedResultName": "gpt-4.1-mini"
+        },
+        "options": {}
+      },
+      "id": "ab848c64-f0d2-47da-96af-c04e1ef5e5fe",
+      "name": "OpenAI Chat Model",
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "position": [
+        -1184,
+        352
+      ],
+      "typeVersion": 1.2
+    },
+    {
+      "parameters": {
+        "sessionIdType": "customKey",
+        "sessionKey": "={{ $('Telegram Trigger').item.json.message.chat.username }}"
+      },
+      "id": "846d5faf-3f96-4aba-ac96-4ed566493436",
+      "name": "Simple Memory",
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "position": [
+        -1104,
+        464
+      ],
+      "typeVersion": 1.3
+    },
+    {
+      "parameters": {
+        "endpointUrl": "https://n8n.exildraw.com/mcp/gmail-mcp/sse",
+        "options": {}
+      },
+      "id": "f88edc32-5250-4f35-aacc-37d94a19d14a",
+      "name": "Gmail MCP",
+      "type": "@n8n/n8n-nodes-langchain.mcpClientTool",
+      "position": [
+        -976,
+        512
+      ],
+      "typeVersion": 1.1
+    },
+    {
+      "parameters": {
+        "endpointUrl": "https://n8n.exildraw.com/mcp/task-manager",
+        "options": {}
+      },
+      "id": "b10deef6-eb04-4760-aa08-fcaf81b3c0f7",
+      "name": "Google Tasks MCP",
+      "type": "@n8n/n8n-nodes-langchain.mcpClientTool",
+      "position": [
+        -688,
+        448
+      ],
+      "typeVersion": 1.1
+    },
+    {
+      "parameters": {
+        "path": "906a5e01-3f46-444e-a3b7-51d2105eac16"
+      },
+      "id": "eb443940-1f39-40ad-866d-04fc0016fcfd",
+      "name": "Gmail MCP Server",
+      "type": "@n8n/n8n-nodes-langchain.mcpTrigger",
+      "position": [
+        -1072,
+        864
+      ],
+      "webhookId": "906a5e01-3f46-444e-a3b7-51d2105eac16",
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('To', ``, 'string') }}",
+        "subject": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Subject', ``, 'string') }}",
+        "message": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Message', ``, 'string') }}",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "id": "fee392bc-387b-419e-8574-c15cacef55ae",
+      "name": "Send Email",
+      "type": "n8n-nodes-base.gmailTool",
+      "position": [
+        -1216,
+        992
+      ],
+      "webhookId": "b5692bdd-471a-4141-8710-b0909a433939",
+      "typeVersion": 2.1,
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "mR9Bpnaj6DHvcp2U",
+          "name": "Zak Gmail"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "descriptionType": "manual",
+        "toolDescription": "Reply to an email message. AI-configurable parameters: Message_ID (string) - the ID of the message; Message (string) - the reply content; Attachment_Field_Name (string) - input field name containing attachments; BCC (string) - comma-separated BCC recipients; CC (string) - comma-separated CC recipients.",
+        "operation": "reply",
+        "messageId": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Message_ID', ``, 'string') }}",
+        "emailType": "text",
+        "message": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Message', ``, 'string') }}",
+        "options": {
+          "appendAttribution": false,
+          "attachmentsUi": {
+            "attachmentsBinary": [
+              {
+                "property": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Attachment_Field_Name', ``, 'string') }}"
+              }
+            ]
+          },
+          "bccList": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('BCC', ``, 'string') }}",
+          "ccList": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('CC', ``, 'string') }}"
+        }
+      },
+      "id": "a8e04476-827e-4b91-b8cf-20cd222c0114",
+      "name": "Reply to an Email",
+      "type": "n8n-nodes-base.gmailTool",
+      "position": [
+        -1136,
+        1088
+      ],
+      "webhookId": "3fda5336-8c0d-426c-abf4-e614cadbcc12",
+      "typeVersion": 2.1,
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "mR9Bpnaj6DHvcp2U",
+          "name": "Zak Gmail"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "descriptionType": "manual",
+        "toolDescription": "Retrieve multiple email messages based on filters. AI-configurable parameters: Return_All (boolean) - whether to return all matching messages; Search (string) - Gmail query string to filter messages; Received_After (string) - datetime (RFC3339) after which messages are received; Received_Before (string) - datetime before which messages are received; Sender (string) - email address of the sender.",
+        "operation": "getAll",
+        "returnAll": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Return_All', ``, 'boolean') }}",
+        "filters": {
+          "q": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Search', ``, 'string') }}",
+          "receivedAfter": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Received_After', ``, 'string') }}",
+          "receivedBefore": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Received_Before', ``, 'string') }}"
+        }
+      },
+      "id": "12eb4967-e2a3-45b9-b7aa-5b3bbf2195f1",
+      "name": "Get Emails",
+      "type": "n8n-nodes-base.gmailTool",
+      "position": [
+        -992,
+        1152
+      ],
+      "webhookId": "35b2c37f-1e18-4fec-a442-3f672e8d839c",
+      "typeVersion": 2.1,
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "mR9Bpnaj6DHvcp2U",
+          "name": "Zak Gmail"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "descriptionType": "manual",
+        "toolDescription": "Add one or more labels to an email message. AI-configurable parameters: Message_ID (string) - the ID of the message to label; Label_Names_or_IDs (string) - comma-separated label names or IDs to apply.",
+        "operation": "addLabels",
+        "messageId": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Message_ID', ``, 'string') }}",
+        "labelIds": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Label_Names_or_IDs', ``, 'string') }}"
+      },
+      "id": "14aa2a98-412c-43b2-bfda-99bc81ef77ae",
+      "name": "Add Label to Email",
+      "type": "n8n-nodes-base.gmailTool",
+      "position": [
+        -896,
+        1216
+      ],
+      "webhookId": "e985e162-2fb5-480a-9c72-5bd5b62876df",
+      "typeVersion": 2.1,
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "mR9Bpnaj6DHvcp2U",
+          "name": "Zak Gmail"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "descriptionType": "manual",
+        "toolDescription": "Retrieve a list of labels. AI-configurable parameters: Return_All (boolean) - whether to return all labels.",
+        "resource": "label",
+        "returnAll": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Return_All', ``, 'boolean') }}"
+      },
+      "id": "5ba55bef-db5e-4709-867d-ecc195e190fa",
+      "name": "Get Labels",
+      "type": "n8n-nodes-base.gmailTool",
+      "position": [
+        -800,
+        1168
+      ],
+      "webhookId": "4bffaaac-3a2e-4cdb-8809-69a2ea942d7b",
+      "typeVersion": 2.1,
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "mR9Bpnaj6DHvcp2U",
+          "name": "Zak Gmail"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "descriptionType": "manual",
+        "toolDescription": "Create an email draft. AI-configurable parameters: Subject (string) - the subject of the draft; Message (string) - the body of the draft; Attachment_Field_Name__in_Input_ (string) - input field name containing attachments; BCC (string) - comma-separated BCC recipients; CC (string) - comma-separated CC recipients.",
+        "resource": "draft",
+        "subject": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Subject', ``, 'string') }}",
+        "emailType": "html",
+        "message": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Message', ``, 'string') }}",
+        "options": {
+          "bccList": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('BCC', ``, 'string') }}",
+          "ccList": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('CC', ``, 'string') }}",
+          "sendTo": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('To_Email', ``, 'string') }}"
+        }
+      },
+      "id": "4706e80e-54fd-47ff-b313-3ee1eaa13539",
+      "name": "Draft Email",
+      "type": "n8n-nodes-base.gmailTool",
+      "position": [
+        -720,
+        1072
+      ],
+      "webhookId": "89cfafeb-e670-46e1-a5c2-f0a0e3ad0332",
+      "typeVersion": 2.1,
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "mR9Bpnaj6DHvcp2U",
+          "name": "Zak Gmail"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "descriptionType": "manual",
+        "toolDescription": "Draft a reply to an email. Use the thread_id parameter to pass the thread for which the email must be drafted",
+        "resource": "draft",
+        "subject": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Subject', ``, 'string') }}",
+        "emailType": "html",
+        "message": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Message', ``, 'string') }}",
+        "options": {
+          "bccList": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('BCC', ``, 'string') }}",
+          "ccList": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('CC', ``, 'string') }}",
+          "threadId": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Thread_ID', ``, 'string') }}"
+        }
+      },
+      "id": "045f416a-c351-44c4-905b-63302a424d54",
+      "name": "Draft Email Reply",
+      "type": "n8n-nodes-base.gmailTool",
+      "position": [
+        -624,
+        992
+      ],
+      "webhookId": "95797251-5c38-45f1-8203-377716c743bd",
+      "typeVersion": 2.1,
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "mR9Bpnaj6DHvcp2U",
+          "name": "Zak Gmail"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "descriptionType": "manual",
+        "toolDescription": "Check if a slot is available on my calendar",
+        "resource": "calendar",
+        "calendar": {
+          "__rl": true,
+          "mode": "list",
+          "value": "jitesh.com@gmail.com",
+          "cachedResultName": "jitesh.com@gmail.com"
+        },
+        "timeMin": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Start_Time', ``, 'string') }}",
+        "timeMax": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('End_Time', ``, 'string') }}",
+        "options": {
+          "timezone": {
+            "__rl": true,
+            "mode": "list",
+            "value": "Asia/Kolkata",
+            "cachedResultName": "Asia/Kolkata"
+          }
+        }
+      },
+      "id": "112b1730-3aed-4f2f-8de2-d85538077007",
+      "name": "Check Availability",
+      "type": "n8n-nodes-base.googleCalendarTool",
+      "position": [
+        -416,
+        1008
+      ],
+      "typeVersion": 1.3,
+      "credentials": {
+        "googleCalendarOAuth2Api": {
+          "id": "1jk10kcqKsHeaJvJ",
+          "name": "Zak Google Calendar"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "descriptionType": "manual",
+        "toolDescription": "Get future events on Google Calendar",
+        "operation": "getAll",
+        "calendar": {
+          "__rl": true,
+          "mode": "list",
+          "value": "jitesh.com@gmail.com",
+          "cachedResultName": "jitesh.com@gmail.com"
+        },
+        "returnAll": true,
+        "timeMin": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('After', `Should be a future date and time`, 'string') }}",
+        "timeMax": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Before', ``, 'string') }}",
+        "options": {
+          "orderBy": "startTime",
+          "recurringEventHandling": "expand",
+          "timeZone": {
+            "__rl": true,
+            "mode": "list",
+            "value": "Asia/Kolkata",
+            "cachedResultName": "Asia/Kolkata"
+          }
+        }
+      },
+      "id": "1689f91b-9785-42c6-baa1-3f1f6e13c7c7",
+      "name": "Get all Events",
+      "type": "n8n-nodes-base.googleCalendarTool",
+      "position": [
+        -320,
+        1088
+      ],
+      "typeVersion": 1.3,
+      "credentials": {
+        "googleCalendarOAuth2Api": {
+          "id": "1jk10kcqKsHeaJvJ",
+          "name": "Zak Google Calendar"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "descriptionType": "manual",
+        "toolDescription": "Delete Calendar Event",
+        "operation": "delete",
+        "calendar": {
+          "__rl": true,
+          "mode": "list",
+          "value": "jitesh.com@gmail.com",
+          "cachedResultName": "jitesh.com@gmail.com"
+        },
+        "eventId": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Event_ID', `Pass the event id of the event to delete`, 'string') }}",
+        "options": {}
+      },
+      "id": "cc54f210-88db-4dad-a2c0-14f66b36a273",
+      "name": "Delete Calendar Event",
+      "type": "n8n-nodes-base.googleCalendarTool",
+      "position": [
+        -160,
+        1184
+      ],
+      "typeVersion": 1.3,
+      "credentials": {
+        "googleCalendarOAuth2Api": {
+          "id": "1jk10kcqKsHeaJvJ",
+          "name": "Zak Google Calendar"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "descriptionType": "manual",
+        "toolDescription": "Get an event in Google Calendar",
+        "operation": "get",
+        "calendar": {
+          "__rl": true,
+          "mode": "list",
+          "value": "jitesh.com@gmail.com",
+          "cachedResultName": "jitesh.com@gmail.com"
+        },
+        "eventId": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Event_ID', `Pass the event id`, 'string') }}",
+        "options": {}
+      },
+      "id": "99e94373-b314-42c5-9c4b-decd6b7670a8",
+      "name": "Get Event",
+      "type": "n8n-nodes-base.googleCalendarTool",
+      "position": [
+        16,
+        1136
+      ],
+      "typeVersion": 1.3,
+      "credentials": {
+        "googleCalendarOAuth2Api": {
+          "id": "1jk10kcqKsHeaJvJ",
+          "name": "Zak Google Calendar"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "descriptionType": "manual",
+        "toolDescription": "Create an event on Google Calendar",
+        "calendar": {
+          "__rl": true,
+          "mode": "list",
+          "value": "jitesh.com@gmail.com",
+          "cachedResultName": "jitesh.com@gmail.com"
+        },
+        "start": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Start', ``, 'string') }}",
+        "end": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('End', ``, 'string') }}",
+        "useDefaultReminders": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Use_Default_Reminders', ``, 'boolean') }}",
+        "additionalFields": {
+          "description": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Description', ``, 'string') }}",
+          "summary": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Summary', ``, 'string') }}",
+          "visibility": "default"
+        }
+      },
+      "id": "93e59369-b252-4525-a105-e39a4814496e",
+      "name": "Create an event",
+      "type": "n8n-nodes-base.googleCalendarTool",
+      "position": [
+        48,
+        976
+      ],
+      "typeVersion": 1.3,
+      "credentials": {
+        "googleCalendarOAuth2Api": {
+          "id": "1jk10kcqKsHeaJvJ",
+          "name": "Zak Google Calendar"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "path": "64e72cc1-3df0-4090-9522-d534c3f245aa"
+      },
+      "id": "84e85119-4c3a-4588-a4b7-9d21aad10ae1",
+      "name": "Calendar MCP Server",
+      "type": "@n8n/n8n-nodes-langchain.mcpTrigger",
+      "position": [
+        -304,
+        832
+      ],
+      "webhookId": "64e72cc1-3df0-4090-9522-d534c3f245aa",
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "endpointUrl": "https://n8n.exildraw.com/mcp/google-calendar/sse",
+        "options": {}
+      },
+      "id": "57987808-585d-4ac8-a6bf-4fa0f2889a5d",
+      "name": "Calendar MCP",
+      "type": "@n8n/n8n-nodes-langchain.mcpClientTool",
+      "position": [
+        -640,
+        336
+      ],
+      "typeVersion": 1.1
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "task": "MDM1NDg1NzcxMjIyNzg5NzQ1ODI6MDow",
+        "taskId": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Task_ID', `Pass the task_id of the task to be completed`, 'string') }}",
+        "updateFields": {
+          "completed": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Completion_Date', `Pass the date when the task is completed`, 'string') }}",
+          "status": "completed"
+        }
+      },
+      "id": "82100371-b73c-455a-87f7-adbf3022ecd5",
+      "name": "Complete a Task",
+      "type": "n8n-nodes-base.googleTasksTool",
+      "position": [
+        -1392,
+        1040
+      ],
+      "typeVersion": 1,
+      "credentials": {
+        "googleTasksOAuth2Api": {
+          "id": "ssNHF6lh0cOV6C0k",
+          "name": "VV_Google Tasks"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "path": "7bf1c961-4feb-4c31-919e-ff300c40406d"
+      },
+      "id": "4338161b-fb9a-4afc-89bb-d63e742212e1",
+      "name": "Task Manager MCP",
+      "type": "@n8n/n8n-nodes-langchain.mcpTrigger",
+      "position": [
+        -1744,
+        896
+      ],
+      "webhookId": "7bf1c961-4feb-4c31-919e-ff300c40406d",
+      "typeVersion": 2
+    },
+    {
+      "parameters": {
+        "endpointUrl": "https://n8n.exildraw.com/mcp/finance-manager/sse",
+        "options": {}
+      },
+      "id": "6d09e6d3-9480-4feb-a423-f801d59d0771",
+      "name": "Finance Tracker",
+      "type": "@n8n/n8n-nodes-langchain.mcpClientTool",
+      "position": [
+        -880,
+        576
+      ],
+      "typeVersion": 1.1
+    },
+    {
+      "parameters": {
+        "path": "f226741c-0f79-4f23-96bf-d8eb47206bcf"
+      },
+      "id": "2631932b-cef3-496a-9b86-33d5230d0f54",
+      "name": "Finance Manager MCP Server",
+      "type": "@n8n/n8n-nodes-langchain.mcpTrigger",
+      "position": [
+        -320,
+        272
+      ],
+      "webhookId": "f226741c-0f79-4f23-96bf-d8eb47206bcf",
+      "typeVersion": 1.1,
+      "notes": "🚀 MCP TRIGGER\n\nThis is the entry point for AI interactions with Google Sheets. The MCP (Model Context Protocol) trigger allows AI models to call any of the connected Google Sheets tools based on user requests.\n\nKey Features:\n• Enables natural language spreadsheet commands\n• Routes AI requests to appropriate Sheets operations\n• Provides context-aware data management\n• Supports complex multi-step data workflows\n• Handles dynamic sheet and document selection"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "1QCS8_RA5neEDAmgotpzgbBbeEjdYi-LAmCSJVeNWVxs",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1QCS8_RA5neEDAmgotpzgbBbeEjdYi-LAmCSJVeNWVxs/edit?usp=drivesdk",
+          "cachedResultName": "Expense Tracker"
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gid=0",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1QCS8_RA5neEDAmgotpzgbBbeEjdYi-LAmCSJVeNWVxs/edit#gid=0",
+          "cachedResultName": "Sheet1"
+        },
+        "options": {}
+      },
+      "id": "006b50d7-f4e8-4e38-afc9-0dce688b58db",
+      "name": "Get all Expenses",
+      "type": "n8n-nodes-base.googleSheetsTool",
+      "position": [
+        -320,
+        432
+      ],
+      "typeVersion": 4.6,
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "yVJArDScrYlFYIyh",
+          "name": "Arpan's Google Sheets account"
+        }
+      },
+      "notes": "📊 READ SPREADSHEET DATA\n\nRetrieve and analyze data from Google Sheets. Perfect for AI to read, process, and extract insights from spreadsheet content.\n\nUse Cases:\n• \"Read data from the Sales sheet\"\n• \"Get all entries from A1:E100\"\n• \"Show me the data in the Budget spreadsheet\"\n• \"Extract customer information from the CRM sheet\"\n\nAI Parameters:\n• Document_ID: Target spreadsheet ID\n• Sheet_Name: Specific sheet tab name\n• Range: Cell range to read (optional)"
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "1QCS8_RA5neEDAmgotpzgbBbeEjdYi-LAmCSJVeNWVxs",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1QCS8_RA5neEDAmgotpzgbBbeEjdYi-LAmCSJVeNWVxs/edit?usp=drivesdk",
+          "cachedResultName": "Expense Tracker"
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gid=0",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1QCS8_RA5neEDAmgotpzgbBbeEjdYi-LAmCSJVeNWVxs/edit#gid=0",
+          "cachedResultName": "Sheet1"
+        },
+        "columns": {
+          "value": {
+            "Date": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Date', ``, 'string') }}",
+            "Amount": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Amount', ``, 'string') }}",
+            "Category": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Category', ``, 'string') }}",
+            "Description": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Description', ``, 'string') }}"
+          },
+          "schema": [
+            {
+              "id": "Date",
+              "type": "string",
+              "display": true,
+              "required": false,
+              "displayName": "Date",
+              "defaultMatch": false,
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Description",
+              "type": "string",
+              "display": true,
+              "required": false,
+              "displayName": "Description",
+              "defaultMatch": false,
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Category",
+              "type": "string",
+              "display": true,
+              "required": false,
+              "displayName": "Category",
+              "defaultMatch": false,
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Amount",
+              "type": "string",
+              "display": true,
+              "required": false,
+              "displayName": "Amount",
+              "defaultMatch": false,
+              "canBeUsedToMatch": true
+            }
+          ],
+          "mappingMode": "defineBelow",
+          "matchingColumns": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "id": "f61104dc-841d-41d5-a732-03bee7fa7ae8",
+      "name": "Create Expense",
+      "type": "n8n-nodes-base.googleSheetsTool",
+      "position": [
+        -192,
+        496
+      ],
+      "typeVersion": 4.6,
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "yVJArDScrYlFYIyh",
+          "name": "Arpan's Google Sheets account"
+        }
+      },
+      "notes": "🗑️ CLEAR SPREADSHEET DATA\n\nRemove data from specific ranges or entire sheets. Useful for resetting data, clearing temporary calculations, or preparing sheets for new data.\n\nUse Cases:\n• \"Clear all data from the temp sheet\"\n• \"Remove entries from A1:E100\"\n• \"Clean up the old data in column C\"\n• \"Reset the calculation area\"\n\nAI Parameters:\n• Document_ID: Target spreadsheet ID\n• Sheet_Name: Sheet to clear data from\n• Range: Specific range to clear\n\n⚠️ Use with caution - data will be permanently removed!"
+    },
+    {
+      "parameters": {
+        "operation": "clear",
+        "documentId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "1QCS8_RA5neEDAmgotpzgbBbeEjdYi-LAmCSJVeNWVxs",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1QCS8_RA5neEDAmgotpzgbBbeEjdYi-LAmCSJVeNWVxs/edit?usp=drivesdk",
+          "cachedResultName": "Expense Tracker"
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gid=0",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1QCS8_RA5neEDAmgotpzgbBbeEjdYi-LAmCSJVeNWVxs/edit#gid=0",
+          "cachedResultName": "Sheet1"
+        },
+        "clear": "specificRows",
+        "startIndex": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Start_Row_Number', ``, 'number') }}",
+        "rowsToDelete": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Number_of_Rows_to_Delete', ``, 'number') }}"
+      },
+      "id": "06116827-92f3-4ea6-8d62-e3dc791f0a29",
+      "name": "Delete Expense",
+      "type": "n8n-nodes-base.googleSheetsTool",
+      "position": [
+        -64,
+        448
+      ],
+      "typeVersion": 4.6,
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "yVJArDScrYlFYIyh",
+          "name": "Arpan's Google Sheets account"
+        }
+      },
+      "notes": "➕ ADD NEW DATA\n\nAppend new rows of data to existing sheets. Perfect for adding records, logging events, or inserting new entries without affecting existing data.\n\nUse Cases:\n• \"Add a new customer to the CRM sheet\"\n• \"Log today's sales data\"\n• \"Insert a new project entry\"\n• \"Record the meeting notes\"\n\nAI Parameters:\n• Document_ID: Target spreadsheet ID\n• Sheet_Name: Sheet to add data to\n• Data_To_Add: Array/object of new data\n\nFeatures:\n• Automatically finds next empty row\n• Preserves existing data\n• Supports multiple columns"
+    },
+    {
+      "parameters": {
+        "descriptionType": "manual",
+        "toolDescription": "Get tasks from Google Tasks",
+        "operation": "getAll",
+        "task": "MDM1NDg1NzcxMjIyNzg5NzQ1ODI6MDow",
+        "returnAll": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Return_All', ``, 'boolean') }}",
+        "additionalFields": {
+          "showCompleted": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Show_Completed', ``, 'boolean') }}"
+        }
+      },
+      "id": "43c8b034-2bf8-4a70-a84a-61c4a5e94f02",
+      "name": "Get many Tasks",
+      "type": "n8n-nodes-base.googleTasksTool",
+      "position": [
+        -1456,
+        1184
+      ],
+      "typeVersion": 1,
+      "credentials": {
+        "googleTasksOAuth2Api": {
+          "id": "ssNHF6lh0cOV6C0k",
+          "name": "VV_Google Tasks"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "delete",
+        "task": "MDM1NDg1NzcxMjIyNzg5NzQ1ODI6MDow",
+        "taskId": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Task_ID', ``, 'string') }}"
+      },
+      "id": "ec1c63ca-1098-4ca0-bf21-7a931a59fc8f",
+      "name": "Delete a Task",
+      "type": "n8n-nodes-base.googleTasksTool",
+      "position": [
+        -1568,
+        1232
+      ],
+      "typeVersion": 1,
+      "credentials": {
+        "googleTasksOAuth2Api": {
+          "id": "ssNHF6lh0cOV6C0k",
+          "name": "VV_Google Tasks"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "get",
+        "task": "MTQ5NTc2Mzk4NjkxNzUxNTA3MjY6MDow",
+        "taskId": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Task_ID', ``, 'string') }}"
+      },
+      "id": "b006c484-9bd4-4db7-a174-e9c7e5f890ca",
+      "name": "Get a Task",
+      "type": "n8n-nodes-base.googleTasksTool",
+      "position": [
+        -1696,
+        1168
+      ],
+      "typeVersion": 1,
+      "credentials": {
+        "googleTasksOAuth2Api": {
+          "id": "i7WXfzi13OG4p5BO",
+          "name": "Arpan's google tasks"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "task": "MTQ5NTc2Mzk4NjkxNzUxNTA3MjY6MDow",
+        "title": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Title', ``, 'string') }}",
+        "additionalFields": {
+          "dueDate": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Due_Date', `Always use future dates`, 'string') }}",
+          "notes": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Notes', ``, 'string') }}"
+        }
+      },
+      "id": "5310df5c-ab00-427d-88be-6d064173658a",
+      "name": "Create a Task",
+      "type": "n8n-nodes-base.googleTasksTool",
+      "position": [
+        -1792,
+        1056
+      ],
+      "typeVersion": 1,
+      "credentials": {
+        "googleTasksOAuth2Api": {
+          "id": "i7WXfzi13OG4p5BO",
+          "name": "Arpan's google tasks"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "getAll",
+        "fields": [
+          "names",
+          "emailAddresses"
+        ],
+        "useQuery": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Use_Query', ``, 'boolean') }}",
+        "query": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Query', ``, 'string') }}",
+        "rawData": true,
+        "options": {}
+      },
+      "id": "66ab3a9f-44df-49e2-a988-fcd34514882a",
+      "name": "Get Contacts",
+      "type": "n8n-nodes-base.googleContactsTool",
+      "position": [
+        -1600,
+        608
+      ],
+      "typeVersion": 1,
+      "credentials": {
+        "googleContactsOAuth2Api": {
+          "id": "nhq5k2xWMxEjfBLT",
+          "name": "VV_Google Contacts"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "path": "01e90a0b-6f53-40d0-a8d3-a05c34a46fbb"
+      },
+      "id": "b196fa74-8c4b-420a-ac8c-7ee9ad702b84",
+      "name": "Google Contacts MCP",
+      "type": "@n8n/n8n-nodes-langchain.mcpTrigger",
+      "position": [
+        -1616,
+        448
+      ],
+      "webhookId": "01e90a0b-6f53-40d0-a8d3-a05c34a46fbb",
+      "typeVersion": 2
+    },
+    {
+      "parameters": {
+        "endpointUrl": "https://n8n.exildraw.com/mcp/google-contacts",
+        "options": {}
+      },
+      "id": "0feab7e2-bb36-48c2-8d15-626a23beb901",
+      "name": "Google Contacts",
+      "type": "@n8n/n8n-nodes-langchain.mcpClientTool",
+      "position": [
+        -768,
+        544
+      ],
+      "typeVersion": 1.1
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.message.text }}\n\n{{ $json.text }}",
+        "options": {
+          "systemMessage": "=You are Jarvis, an intelligent productivity assistant designed to help manage daily tasks, communications, and schedules efficiently. You have access to multiple tools and should use them proactively to assist the user.\n\n## Core Identity\n- You are professional, helpful, and proactive\n- Always maintain a personal assistant tone - attentive but not overly casual\n- Use \"Jitesh Dugar\" as the user's name in all communications\n- Current date and time: {{ $now }}\n- Timezone: Asia/Kolkata\n\n## Available Capabilities\n\n### Email Management (Gmail MCP)\n- Read, send, reply to, and draft emails\n- Organize emails with labels\n- Search and filter emails by various criteria\n- Always use well-formatted HTML for email composition\n- Include proper signatures with \"Jitesh Dugar\"\n- If you're asked to send an email, just use the 'Google Contacts MCP' to get their email address first, then confirm from the user\n\n### Calendar Management (Calendar MCP)\n- Check availability and schedule conflicts\n- Create, update, reschedule, and delete events\n- Retrieve upcoming events and meetings\n- Handle meeting requests and confirmations\n\n### Task Management (Google Tasks MCP)\n- Create, update, complete, and delete tasks\n- Retrieve task lists with filtering options\n- Set due dates and add detailed notes\n- Mark tasks as completed with timestamps\n\n### Finance Tracking (Finance Manager MCP)\n- Log expenses with categories and descriptions\n- Retrieve expense reports and summaries\n- Delete or modify expense entries\n- Track spending patterns\n\n### Contact Management (Google Contacts MCP)\n- Search and retrieve contact information\n- Access email addresses and phone numbers for communications\n\n## Communication Guidelines\n\n### Email Composition\n- Use professional HTML formatting\n- Include clear subject lines\n- Structure emails with proper greetings and closings\n- Always sign emails as \"Jitesh Dugar\"\n- No placeholder text - ask for clarification if information is missing\n\n### Response Style\n- Be concise but complete in responses\n- Proactively suggest related actions when appropriate\n- Confirm actions taken and provide relevant details\n- If multiple steps are involved, explain what you're doing\n\n## Operational Rules\n\n### Data Handling\n- Always use specific, actionable parameters\n- For dates, use future dates when creating tasks/events unless specified otherwise\n- When scheduling, check for conflicts before confirming\n- Validate email addresses before sending\n\n### Error Management\n- If information is incomplete, ask specific questions\n- Don't use placeholders or generic text\n- Confirm understanding before executing actions\n- Provide clear feedback on completed actions\n\n### Privacy & Security\n- Handle all personal information with appropriate discretion\n- Confirm sensitive actions before executing\n- Maintain professional boundaries in all communications\n\n## Task Prioritization\n1. **Urgent**: Time-sensitive items (meetings, deadlines)\n2. **Important**: High-impact tasks and communications\n3. **Routine**: Regular maintenance and organization\n4. **Optional**: Enhancement and optimization tasks\n\n## Example Interactions\n\n**Calendar Query**: \"What meetings do I have today?\"\n→ Check calendar for today's events, provide detailed schedule with times and attendees\n\n**Email Task**: \"Send a follow-up email to the marketing team about the quarterly review\"\n→ Ask for specific details if needed, compose professional HTML email, confirm before sending\n\n**Task Creation**: \"Add a reminder to prepare the presentation for next week\"\n→ Create task with appropriate due date, ask for specific deadline if unclear\n\n**Expense Logging**: \"I spent $45 on lunch at the restaurant\"\n→ Log expense with date, amount, category (Food/Dining), and description\n\n## Always Remember\n- You represent Jitesh professionally in all communications\n- Double-check important details before executing actions\n- Provide clear confirmations of completed tasks\n- Be proactive in suggesting helpful follow-up actions\n- Maintain context across conversations using the memory system"
+        }
+      },
+      "id": "a78117d2-028a-47c1-b8ec-420251935b4b",
+      "name": "Jarvis",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "position": [
+        -1024,
+        192
+      ],
+      "typeVersion": 2.2,
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {},
+      "id": "1301c29d-e675-4fb5-aaf5-ad7ac0e4c85a",
+      "name": "Think",
+      "type": "@n8n/n8n-nodes-langchain.toolThink",
+      "position": [
+        -1072,
+        592
+      ],
+      "typeVersion": 1.1
+    },
+    {
+      "parameters": {
+        "content": "## Jarvis 🤖\nYour AI-powered personal assistant.  \n- Orchestrates tasks, calendar, emails, contacts & expenses  \n- Uses memory + OpenAI model for smart decisions  \n- Sends results back to Telegram  ",
+        "height": 704,
+        "width": 768
+      },
+      "id": "1cb6e472-d94e-49bf-bd88-4aef1eb98eb3",
+      "name": "Sticky Note1",
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -1248,
+        16
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "content": "## Gmail MCP 📧\nFull email management.  \n- Send & draft messages  \n- Reply, label, and fetch emails  ",
+        "height": 640,
+        "width": 768,
+        "color": 3
+      },
+      "id": "4024400e-004f-4f71-85e3-4fe0c97d7a50",
+      "name": "Sticky Note4",
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -1248,
+        736
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "content": "## Finance Manager MCP 💵\nTrack personal or business expenses.  \n- Create new expenses  \n- Get expense reports  \n- Delete outdated entries  ",
+        "height": 544,
+        "width": 496,
+        "color": 4
+      },
+      "id": "d2ec0f4e-2371-4501-8b1b-4f63b7a40aab",
+      "name": "Sticky Note5",
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -400,
+        112
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "content": "## Google Contacts MCP 👥\nAccess and manage your contact list.  \n- Fetch contacts for quick communication  ",
+        "height": 416,
+        "width": 448,
+        "color": 6
+      },
+      "id": "67934dde-6453-421a-91ac-7a213930d40e",
+      "name": "Sticky Note6",
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -1776,
+        320
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "content": "## Calendar MCP 📅\nYour scheduling hub.  \n- Check availability  \n- Create, reschedule, or delete events ",
+        "height": 704,
+        "width": 624,
+        "color": 5
+      },
+      "id": "9c536191-0285-4143-a7a7-305dc04e65ee",
+      "name": "Sticky Note3",
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -464,
+        672
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "content": "## Task Manager MCP ✅\nManages to-dos with ease:  \n- Create / Complete / Delete tasks  \n- Retrieve individual or bulk tasks ",
+        "height": 624,
+        "width": 560,
+        "color": 6
+      },
+      "id": "e338b4c3-539e-4b5d-b6a9-669e17815759",
+      "name": "Sticky Note2",
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -1824,
+        752
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "updates": [
+          "messages"
+        ],
+        "options": {}
+      },
+      "type": "n8n-nodes-base.whatsAppTrigger",
+      "typeVersion": 1,
+      "position": [
+        -1584,
+        -32
+      ],
+      "id": "6c2e5111-a3bc-4560-8621-06b16a70c8f7",
+      "name": "WhatsApp Trigger",
+      "webhookId": "22eea661-631d-4ccd-a186-2b42e3ed93c9",
+      "credentials": {
+        "whatsAppTriggerApi": {
+          "id": "WG4jMGut517jnBf1",
+          "name": "Whatsapp Test AI Agent"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "send",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.whatsApp",
+      "typeVersion": 1.1,
+      "position": [
+        -384,
+        -48
+      ],
+      "id": "cf150034-2f0e-4c28-81e5-63a5fd3fe4e5",
+      "name": "Send message",
+      "webhookId": "8343a9e7-ccf5-427d-8c4a-274e4a34e242",
+      "credentials": {
+        "whatsAppApi": {
+          "id": "Wcl8VXeKHeRCe79U",
+          "name": "WhatsApp Sender Agent"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Think": {
+      "ai_tool": [
+        [
+          {
+            "node": "Jarvis",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Jarvis": {
+      "main": [
+        [
+          {
+            "node": "Send message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Event": {
+      "ai_tool": [
+        [
+          {
+            "node": "Calendar MCP Server",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Gmail MCP": {
+      "ai_tool": [
+        [
+          {
+            "node": "Jarvis",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Emails": {
+      "ai_tool": [
+        [
+          {
+            "node": "Gmail MCP Server",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Labels": {
+      "ai_tool": [
+        [
+          {
+            "node": "Gmail MCP Server",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get a Task": {
+      "ai_tool": [
+        [
+          {
+            "node": "Task Manager MCP",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send Email": {
+      "ai_tool": [
+        [
+          {
+            "node": "Gmail MCP Server",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Draft Email": {
+      "ai_tool": [
+        [
+          {
+            "node": "Gmail MCP Server",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Calendar MCP": {
+      "ai_tool": [
+        [
+          {
+            "node": "Jarvis",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Contacts": {
+      "ai_tool": [
+        [
+          {
+            "node": "Google Contacts MCP",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create a Task": {
+      "ai_tool": [
+        [
+          {
+            "node": "Task Manager MCP",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Delete a Task": {
+      "ai_tool": [
+        [
+          {
+            "node": "Task Manager MCP",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Simple Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "Jarvis",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create Expense": {
+      "ai_tool": [
+        [
+          {
+            "node": "Finance Manager MCP Server",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Delete Expense": {
+      "ai_tool": [
+        [
+          {
+            "node": "Finance Manager MCP Server",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get all Events": {
+      "ai_tool": [
+        [
+          {
+            "node": "Calendar MCP Server",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get many Tasks": {
+      "ai_tool": [
+        [
+          {
+            "node": "Task Manager MCP",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Complete a Task": {
+      "ai_tool": [
+        [
+          {
+            "node": "Task Manager MCP",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create an event": {
+      "ai_tool": [
+        [
+          {
+            "node": "Calendar MCP Server",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Finance Tracker": {
+      "ai_tool": [
+        [
+          {
+            "node": "Jarvis",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Contacts": {
+      "ai_tool": [
+        [
+          {
+            "node": "Jarvis",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get all Expenses": {
+      "ai_tool": [
+        [
+          {
+            "node": "Finance Manager MCP Server",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Tasks MCP": {
+      "ai_tool": [
+        [
+          {
+            "node": "Jarvis",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Draft Email Reply": {
+      "ai_tool": [
+        [
+          {
+            "node": "Gmail MCP Server",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Jarvis",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Reply to an Email": {
+      "ai_tool": [
+        [
+          {
+            "node": "Gmail MCP Server",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Add Label to Email": {
+      "ai_tool": [
+        [
+          {
+            "node": "Gmail MCP Server",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check Availability": {
+      "ai_tool": [
+        [
+          {
+            "node": "Calendar MCP Server",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Delete Calendar Event": {
+      "ai_tool": [
+        [
+          {
+            "node": "Calendar MCP Server",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "WhatsApp Trigger": {
+      "main": [
+        [
+          {
+            "node": "Jarvis",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "a326d175-d868-4d05-b90a-780918dc3f80",
+  "meta": {
+    "instanceId": "a39925a189fc4958777cfbc2ee952f96a625e56b8dde120f89d58a7cdacf694a"
+  },
+  "id": "XIRfiSx6ziMqbg0H",
+  "tags": []
+}
