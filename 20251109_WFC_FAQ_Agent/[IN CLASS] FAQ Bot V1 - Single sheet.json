@@ -1,0 +1,165 @@
+{
+  "name": "[IN CLASS] FAQ Bot V1 - Single sheet",
+  "nodes": [
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        -144,
+        160
+      ],
+      "id": "f0504d6f-e798-4409-ac42-1804e80bb24e",
+      "name": "When chat message received",
+      "webhookId": "1e36aa33-fe60-4eac-a4a9-e9db0e60bbc5"
+    },
+    {
+      "parameters": {
+        "options": {
+          "systemMessage": "=You are a practical e-commerce FAQ assistant.\n\nYou answer customer questions using a Google Sheet named “FAQ_Master” which contains two columns:\n- question_canonical: the standardized version of each frequently asked question.\n- answer_rich_text: the verified answer that should be shown to the user.\n\nYou have a google sheet tool which has all the FAQs.  \nReturn the response to reply to the text that closely matches the user’s intent.\n\nInstructions:\n1. Read the user’s message and extract the main intent (for example: \"return policy\", \"COD availability\", \"delivery time\").\n2. match it with the closest question in the sheet and return the response\nIf multiple matches → pick the best one (highest intent similarity) and then show up to two “Related FAQs”.\n   - If no match → say “I couldn’t find that in our FAQs. Could you please clarify?” \n\n3. Never invent or guess answers. Only use data from the sheet.\n4. Keep responses short, clear, and human. Use bullet points if the answer is long.\n\nResponse format:\nAnswer:\n<answer_rich_text>\n\nTone: professional, friendly, and factual. No emojis or filler text.\n\n- Objective: Solve the customer’s query quickly and accurately, based solely on the data provided."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2.2,
+      "position": [
+        64,
+        160
+      ],
+      "id": "cf08f265-9236-43b6-b7c1-b600de81db7b",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        -96,
+        384
+      ],
+      "id": "98b397f3-34c0-47e2-abb3-7dc2cfb6060e",
+      "name": "Google Gemini Chat Model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "zH4PQ2tPro6p4N8z",
+          "name": "Arpan's Google Gemini(PaLM) Api "
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.3,
+      "position": [
+        64,
+        368
+      ],
+      "id": "59cc1278-8ce2-4e67-8aa3-27b202794f55",
+      "name": "Simple Memory"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "=1HiP5AZ7r162gh3o-5vKx9VK6z1YT7uXjbgrLbQYl4HA",
+          "mode": "id"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1HiP5AZ7r162gh3o-5vKx9VK6z1YT7uXjbgrLbQYl4HA/edit#gid=0"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheetsTool",
+      "typeVersion": 4.7,
+      "position": [
+        208,
+        368
+      ],
+      "id": "753bea29-d05e-4f18-81aa-e1ac6046fabf",
+      "name": "FAQ_Master",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "50DCmt1movthIA5n",
+          "name": "KN DSM Public Google Sheets 9 NOV 2025"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "## Questions to ask\n1) How can I track my order?\n2) What is the return policy?\n3) How to get in touch?"
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -480,
+        192
+      ],
+      "typeVersion": 1,
+      "id": "bbaa3eb6-c56e-4b98-8b14-8dcd8fbf37dd",
+      "name": "Sticky Note"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When chat message received": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Simple Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "FAQ_Master": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "41f03fa1-b012-46f5-b9b8-034911980402",
+  "meta": {
+    "instanceId": "a39925a189fc4958777cfbc2ee952f96a625e56b8dde120f89d58a7cdacf694a"
+  },
+  "id": "q4U7UAoxZCgqdscr",
+  "tags": []
+}

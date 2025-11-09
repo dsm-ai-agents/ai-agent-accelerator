@@ -1,0 +1,256 @@
+{
+  "name": "[IN CLASS] FAQ Bot V2 - Multiple sheet",
+  "nodes": [
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        -400,
+        -176
+      ],
+      "id": "6d620e8d-bfca-4055-b4c4-b7494f4b55ab",
+      "name": "When chat message received",
+      "webhookId": "1e36aa33-fe60-4eac-a4a9-e9db0e60bbc5"
+    },
+    {
+      "parameters": {
+        "options": {
+          "systemMessage": "=You are a smart, factual e-commerce FAQ assistant that answers customer questions using three Google Sheets as your knowledge sources. \nEach sheet acts as a separate tool.\n\nTOOLS AND THEIR STRUCTURE\n--------------------------------------------------\n1) Policies_Terms\n   Columns: policy_area, question_canonical, policy_answer, window_or_limits\n   → Use this sheet for company policies like shipping, returns, exchanges, cancellations, COD, warranty, etc.\n\n2) Product_Knowledge\n   Columns: product_name, category, materials, care, warranty_note\n   → Use this sheet for product-related questions like fabric, material, wash care, category, and warranty.\n\n3) Operations_Contact\n   Columns: topic, contact_email, whatsapp_number, phone_hours\n   → Use this sheet for contact details, escalation, or support information.\n\n--------------------------------------------------\nTOOL ACCESS FUNCTIONS\n- find_policy(query: string)\n  → returns matching rows from Policies_Terms\n- find_product(query: string)\n  → returns matching rows from Product_Knowledge\n- find_ops(query: string)\n  → returns one or more rows from Operations_Contact\n\n--------------------------------------------------\nREASONING AND BEHAVIOR\n1. Classify the incoming user message:\n   - If about delivery, return, refund, cancellation, payment, or warranty → call find_policy.\n   - If about a product’s material, fabric, category, or care → call find_product.\n   - If about customer support, escalation, or contact → call find_ops.\n\n2. When calling a tool:\n   - Use short keyword queries (3–6 words) representing the user’s intent.\n   - Retrieve all possible matches, then pick the most relevant row by comparing the user’s question to question_canonical or product_name fields.\n\n3. Response construction:\n   - Start with a clear, direct answer (1–2 sentences) based on the best matched row.\n   - Then provide 2–4 concise bullet points with useful details:\n       • key time windows (from window_or_limits if applicable)\n       • material/care/warranty details if product-related\n       • contact info (from Operations_Contact) if user asks for support\n   - If no confident match is found, respond with:\n       “I couldn’t find that information in our FAQs. Would you like me to connect you to our support team?”\n     Then include the default contact details from the Operations_Contact sheet (topic=\"General\" if present).\n\n4. Ranking and selection:\n   - Prioritize the row whose question_canonical or product_name is most semantically similar to the query.\n   - If multiple rows are equally relevant, choose one and mention “Related FAQs” listing the other question_canonical or product_name values.\n\n5. Safety and integrity:\n   - Never generate or assume new data beyond the sheet content.\n   - Always prefer data freshness and clarity over verbosity.\n   - Use Indian context where timelines or prices may differ.\n\n--------------------------------------------------\nRESPONSE FORMAT EXAMPLE\nAnswer:\n<short final answer from policy_answer or equivalent field>\n\nDetails:\n• <window_or_limits or care/warranty_note>\n• <additional bullet points if applicable>\n\nIf relevant:\n• Contact: <contact_email> / <whatsapp_number> (<phone_hours>)\n• Related FAQs: <comma-separated question_canonical values>\n\n--------------------------------------------------\nSTYLE\n- Tone: Friendly, concise, trustworthy.\n- Format: Use short paragraphs or bullets. No emojis or unnecessary text.\n- Objective: Solve the customer’s query quickly and accurately, based solely on the data provided.\n\n"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2.2,
+      "position": [
+        -192,
+        -176
+      ],
+      "id": "e60a90d6-ae56-466a-aa07-360c42b4e805",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        -320,
+        32
+      ],
+      "id": "23ae65e2-260b-4bd9-b2c8-6e28a244fcb2",
+      "name": "Google Gemini Chat Model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "zH4PQ2tPro6p4N8z",
+          "name": "Arpan's Google Gemini(PaLM) Api "
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.3,
+      "position": [
+        -192,
+        32
+      ],
+      "id": "1db1dd73-39cc-4d5a-bc7e-2d1b206c00bc",
+      "name": "Simple Memory"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1c4UcQvL4GcXrnOA09WoDcWafTBtnl62pHfoRFQuy5fA",
+          "mode": "list",
+          "cachedResultName": "20251109 - E-commerce FAQs - V2",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1c4UcQvL4GcXrnOA09WoDcWafTBtnl62pHfoRFQuy5fA/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Policies_Terms",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1c4UcQvL4GcXrnOA09WoDcWafTBtnl62pHfoRFQuy5fA/edit#gid=0"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheetsTool",
+      "typeVersion": 4.7,
+      "position": [
+        -16,
+        48
+      ],
+      "id": "7f083863-e580-4690-8204-535b5a65eb17",
+      "name": "Policies_Terms",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "50DCmt1movthIA5n",
+          "name": "KN DSM Public Google Sheets 9 NOV 2025"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1c4UcQvL4GcXrnOA09WoDcWafTBtnl62pHfoRFQuy5fA",
+          "mode": "list",
+          "cachedResultName": "20251109 - E-commerce FAQs - V2",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1c4UcQvL4GcXrnOA09WoDcWafTBtnl62pHfoRFQuy5fA/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 107927771,
+          "mode": "list",
+          "cachedResultName": "Product_Knowledge",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1c4UcQvL4GcXrnOA09WoDcWafTBtnl62pHfoRFQuy5fA/edit#gid=107927771"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheetsTool",
+      "typeVersion": 4.7,
+      "position": [
+        128,
+        48
+      ],
+      "id": "2558e4f4-7e17-4b07-ba04-923b28d925c8",
+      "name": "Product_Knowledge",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "50DCmt1movthIA5n",
+          "name": "KN DSM Public Google Sheets 9 NOV 2025"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1c4UcQvL4GcXrnOA09WoDcWafTBtnl62pHfoRFQuy5fA",
+          "mode": "list",
+          "cachedResultName": "20251109 - E-commerce FAQs - V2",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1c4UcQvL4GcXrnOA09WoDcWafTBtnl62pHfoRFQuy5fA/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1255456453,
+          "mode": "list",
+          "cachedResultName": "Operations_Contact",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1c4UcQvL4GcXrnOA09WoDcWafTBtnl62pHfoRFQuy5fA/edit#gid=1255456453"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheetsTool",
+      "typeVersion": 4.7,
+      "position": [
+        304,
+        48
+      ],
+      "id": "18c1d175-e1eb-405d-95a0-1335a119091b",
+      "name": "Operations_Contact",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "50DCmt1movthIA5n",
+          "name": "KN DSM Public Google Sheets 9 NOV 2025"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "## Questions to ask \n1) What is the return policy?\n2) Do you have earbuds?\n3) How to get in touch?"
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -720,
+        -160
+      ],
+      "typeVersion": 1,
+      "id": "43b0c955-ad22-4e16-8a8d-e8c7a0c14cf6",
+      "name": "Sticky Note"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When chat message received": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Simple Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Policies_Terms": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Product_Knowledge": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Operations_Contact": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "74b5bec9-8626-4d78-82ff-008f90e0af89",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "a39925a189fc4958777cfbc2ee952f96a625e56b8dde120f89d58a7cdacf694a"
+  },
+  "id": "UFVGEyAqfhS3iQL9",
+  "tags": []
+}
