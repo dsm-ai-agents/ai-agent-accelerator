@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>n8n Chat Demo Page</title>
+    <link href="https://cdn.jsdelivr.net/npm/@n8n/chat/dist/style.css" rel="stylesheet" />
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            margin: 40px;
+            background-color: #f8f9fa;
+        }
+        h1 {
+            color: #333;
+        }
+        p {
+            color: #555;
+            max-width: 700px;
+        }
+        footer {
+            margin-top: 50px;
+            font-size: 14px;
+            color: #777;
+        }
+    </style>
+</head>
+<body>
+    <h1>Welcome to My Sample Page</h1>
+    <p>
+        This is a sample web page to test the integration of the n8n Chat widget.
+        You can scroll, click around, or just chat with the bot in the corner!
+    </p>
+    <p>
+        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent commodo
+        justo ut turpis hendrerit, in congue enim tristique. Nulla facilisi. Duis
+        fringilla, nunc non viverra egestas, odio justo efficitur orci, nec
+        facilisis turpis ante sit amet libero. Donec ac nisi non risus aliquet
+        efficitur. Phasellus sodales nisi ac nisl tincidunt, sed imperdiet justo
+        facilisis.
+    </p>
+
+    <footer>
+        &copy; 2025 Sample Page. All rights reserved.
+    </footer>
+
+    <script type="module">
+        import { createChat } from 'https://cdn.jsdelivr.net/npm/@n8n/chat/dist/chat.bundle.es.js';
+        createChat({
+            webhookUrl: 'https://n8n-6421994137235212.kloudbeansite.com/webhook/0de53528-1504-4845-817c-48c7e05afdc9/chat'
+        });
+    </script>
+</body>
+</html>
