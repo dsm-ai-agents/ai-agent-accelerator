@@ -189,14 +189,6 @@ MANUALLY EVERY MORNING].
 
 ---
 
-## Recording rules
-
-- **Never fake a result.** If the agent misses something, keep it in and review it on camera — that's *Delegate & Review*.
-- **Cut waiting time** with Loom cuts; never speed up the typing of prompts — viewers pause to copy them.
-- **Show the prompt on the slide** before each demo so viewers can screenshot it.
-
----
-
 ## Files in this repo
 
 | File | Use |
