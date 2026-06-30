@@ -1,5 +1,25 @@
 # Copilot Frontier — Prompt Pack
 
+**Delegate, Don't Prompt** — every prompt used in the *Copilot Frontier* course, copy-paste ready.
+
+Two kinds of prompt below:
+- **Demo** — what the presenter runs on camera.
+- **Rep** — the template a viewer fills in and runs themselves.
+
+Module order: **0** Reframe · **1** Researcher · **2** Analyst · **3** Agents in Office · **4** Create · **5** Build Your Own Agent · **6** Workflows.
+
+---
+
+## Module 0 — The Reframe
+
+Two ways to use Copilot: *Ask & Answer* (you do the work with the output) vs. *Delegate & Review* (it plans, executes, reports back — you review). Frontier is the second one.
+
+**The IT ask** — send this if your Copilot sidebar has no Agents section:
+
+```
+Please enable Copilot Frontier and Anthropic models in our Microsoft 365 tenant.
+```
+
 ---
 
 ## Module 1 — Researcher
@@ -130,13 +150,16 @@ entirely, say so first.
 Review the attached draft proposal.
 ```
 
-**Rep — spec template:**
+**Rep — your Own template:**
 
 ```
-Agent name: [NAME]. Who it serves: [TEAM]. What it knows: [THE 1-3 DOCUMENTS
-IT SHOULD FOLLOW]. What it does: [THE REPEATED TASK]. How it answers:
-[FORMAT — checklist, draft, summary].
+<Describe a little bit about your roles and responsibilities>. I have a free/premium subscription of MS 365 Copilot. Based my subscription, roles and responsibilities, give me a list of custom Copilot Agents I can create and use
 ```
+Once you have the list, choose the simplest one and give the following prompt:
+```
+Give me the name, description and instructions for the first one
+```
+You can give the number of any agent you want
 
 ---
 
@@ -165,11 +188,19 @@ MANUALLY EVERY MORNING].
 ```
 
 ---
+
+## Recording rules
+
+- **Never fake a result.** If the agent misses something, keep it in and review it on camera — that's *Delegate & Review*.
+- **Cut waiting time** with Loom cuts; never speed up the typing of prompts — viewers pause to copy them.
+- **Show the prompt on the slide** before each demo so viewers can screenshot it.
+
+---
+
 ## Files in this repo
 
 | File | Use |
 |------|-----|
-| `copilot-frontier-course-v2.pptx` | The course deck (8 modules, Workflows last) |
 | `demo-sales-data.xlsx` | Dataset for Modules 2 and 3 (planted anomalies) |
 | `proposal-standards.docx` | Knowledge doc for the Module 5 agent |
 | `sample-proposal.docx` | Flawed proposal to test the Module 5 agent |
