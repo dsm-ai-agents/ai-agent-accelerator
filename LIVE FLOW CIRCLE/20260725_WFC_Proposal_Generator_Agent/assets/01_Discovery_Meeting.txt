@@ -1,0 +1,29 @@
+Discovery Meeting Transcript
+
+Client: ABC Electronics
+
+Consultant: Thank you for meeting with us. Could you describe your current customer support process?
+
+Client: We sell consumer electronics online. We receive around 300 customer queries every day through WhatsApp, email, and our website.
+
+Consultant: How many support agents do you have?
+
+Client: Eight full-time agents.
+
+Consultant: What are the biggest challenges?
+
+Client:
+- Slow response times (4–6 hours)
+- Repetitive questions
+- Agents spend too much time answering FAQs
+- No support after business hours
+- Difficult to track conversations across channels
+
+Consultant: What are your goals?
+
+Client:
+- Respond within 5 minutes
+- Offer 24/7 support
+- Reduce repetitive workload
+- Improve customer satisfaction
+- Escalate only complex cases to humans

@@ -1,0 +1,17 @@
+Service,Category,Recommended_Qty,Unit_Price_USD,Line_Total_USD
+Discovery Workshop,Project,1,1500,1500
+Business Process Assessment,Project,1,1200,1200
+Knowledge Base Creation,Project,1,1800,1800
+AI FAQ Agent,Module,1,3000,3000
+Order Tracking Integration,Integration,1,1800,1800
+Returns & Refund Agent,Module,1,2200,2200
+Website Chatbot,Channel,1,900,900
+WhatsApp Integration,Channel,1,1200,1200
+Email Automation,Channel,1,900,900
+Human Escalation Workflow,Workflow,1,1200,1200
+Analytics Dashboard,Dashboard,1,1500,1500
+User Acceptance Testing,Project,1,1000,1000
+Staff Training,Session,2,600,1200
+Project Management,Week,6,350,2100
+Hypercare Support (30 Days),Month,1,750,750
+Annual Support & Maintenance,Year,1,4800,4800
