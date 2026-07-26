@@ -147,6 +147,17 @@ Prompt #2
 ```
 create a Claude.MD file, which will, take in the inputs that is the one, two, three, four, these four files as the inputs. distill the content of this into a step one underscore the content.MD. this will be the first agent that will take these four files and get the important content slide wise based on the proposal deck input guide that we have provided that is a zero five. read all the slides that are available in zero five proposal deck input and organize and a content.md and store it into the content folder which is empty currently. And then I wanted to create a step two underscore proposal.MD which is going to take the content.MD and produce a PowerPoint presentation, McKenzie style very good high-tech consulting type proposal deck and create a PowerPoint presentation in the output file. First, I want you to create all these things before you run all of these steps. First, each step should be created, Claude MD, step one and step two agents, and then we are going to execute it.
 ```
+
+Prompt #3
+```
+Run this workflow
+```
+
+Prompt #4
+```
+also create a DESIGN.MD files to create consist slied asper the theme in future
+```
+
 ---
 
 # 💡 Success Criteria

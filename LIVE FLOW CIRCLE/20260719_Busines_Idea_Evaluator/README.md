@@ -171,15 +171,7 @@ Then act as a Verdict role that synthesizes all four into scores (1 to 10) and a
 Save the result as evaluation.md in this folder, with one section per role and the verdict at the top.
 ```
 
-### Step 2 - Creating Agents in Claude
-
-```
-Create 4 agents. one will evaluate the market, another will evaluate pricing, third will evaluate
-positioning and fourth will evaluate revenue
-```
-
-
-### Step 3 — Convert into something reusable
+### Step 2 — Convert into something reusable
 
 Once Step 1 works, turn the working panel into a reusable form. Pick one.
 
@@ -194,18 +186,6 @@ Take the evaluation panel you just ran and turn it into a reusable Skill. Create
 ```
 Create a CLAUDE.md in this folder so that any time we work here, you behave as this business idea evaluation panel by default: the four specialist roles and the verdict format, ready to apply to whatever idea I paste.
 ```
-
-### Step 4 - Updating the MD files
-```
-update the md files to generate the response of the business analysis in the
-form of a word report
-```
-
-### Step 5 - Deployment
-```
-create an html file where the user can post ideas ana you can share the evaluation on the screen
-but not as a word file
-```t
 
 ---
 
