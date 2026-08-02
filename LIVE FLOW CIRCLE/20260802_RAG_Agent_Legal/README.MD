@@ -166,6 +166,8 @@ Create a small knowledge base by:
 5. Do not change the contract text.
 
 The goal is to help another AI quickly locate the correct contracts before answering questions.
+
+Create a sperate folder called "knowledge_base' and copy the md files and create the index.md within here. 
 ```
 
 ---
