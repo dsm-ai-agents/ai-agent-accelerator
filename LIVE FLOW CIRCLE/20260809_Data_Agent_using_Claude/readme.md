@@ -17,3 +17,8 @@ I want you to create an agent one dot analysis, uh, MD file, which is going to, 
 ```
 I want you to create a live dashboard based on these two tables. A KPI dashboard. You're gonna call this a KPI dashboard, which will show, uh, the numb... the total number of transactions, uh, you know, the the sum of revenue, some of units, and all the most important metrics. Right? And then it will show a graph, uh, you know, um, month on month graph of the sales units and whatever metrics that we have here, and you'll do a, like, on one page, you'll, like, on on on one row, you'll have two charts only maximum. Okay? And ensure that the connection is live. Right? And this should be a HTML report.
 ```
+
+# Prompt 5
+```
+now deploy this html report to vercel
+```
