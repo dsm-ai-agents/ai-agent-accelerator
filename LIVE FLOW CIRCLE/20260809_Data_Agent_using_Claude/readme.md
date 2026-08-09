@@ -22,3 +22,8 @@ I want you to create a live dashboard based on these two tables. A KPI dashboard
 ```
 now deploy this html report to vercel
 ```
+
+# Prompt 6
+```
+So I I have a invoices folder. What I wanted to do is right now, I wanted to read the invoices and create a CSV file and then I want you to then upload that. create a new table in Superbase and then upload that CSV file there so that I can access it live
+```
