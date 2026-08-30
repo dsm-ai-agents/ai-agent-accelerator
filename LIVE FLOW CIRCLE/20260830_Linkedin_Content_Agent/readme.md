@@ -30,6 +30,17 @@ Before creating any files, show the proposed architecture, workflow, folders, an
 Keep it as crisp as this brief, without overcomplicating it.
 ```
 
+# Prompt 1b
+```
+Two additions to the scaffold:
+
+1. Update `agent_3_image_gen.md`: before generating, ask the user their image style (background/text color, bottom-left and bottom-right text) as button options with "Other". Render PNGs using whatever the environment supports — HTML→PNG if a headless browser exists, otherwise draw directly with PIL. Never attempt to install a browser.
+
+2. Create `agent_5_publish.md` and `outputs/posts/completed/`: publishes one post to LinkedIn via the Composio connector, then moves it to completed/. For images, generate the image inside Composio's remote sandbox (Python/PIL available there) and upload with `upload_local_file` to get an s3key — never relay base64 image bytes from the local sandbox into Composio, it corrupts. Confirm post text with the user once before publishing.
+
+Update CLAUDE.md to reflect both. Scaffold only — do not run any agent.
+```
+
 # Prompt 2
 ```
 Activate Agent 1
@@ -52,5 +63,5 @@ Activate Agent 4
 
 # Prompt 6
 ```
-Crate a Schedule post each one content every day at 11AM and move to completed folder
+Schedule agent_5 to publish one post every day at 11AM and move it to the completed folder
 ```
