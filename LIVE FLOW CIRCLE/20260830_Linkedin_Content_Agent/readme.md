@@ -37,7 +37,7 @@ Activate Agent 1
 
 # Prompt 3
 ```
-Activate Agent 1
+Activate Agent 2
 ```
 
 # Prompt 4
