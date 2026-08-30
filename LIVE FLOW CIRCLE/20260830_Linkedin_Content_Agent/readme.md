@@ -1,29 +1,56 @@
 # Prompt 1
 ```
-can you check if you have access to Supabase, if yes list the tables in my supabse
+Create a B2B LinkedIn content creator agent pipeline from scratch. Do not run or execute any agent — only create the files and folders.
+
+First create `CLAUDE.md` with project goal, workflow, folders, inputs, outputs, tools, and agent roles.
+
+Folders:
+- inputs/
+- outputs/
+- outputs/posts/
+- outputs/images/
+- agents/
+
+Agents:
+
+`agent_1_intake.md` — asks the user exactly 5 questions. Every question must be multiple-select (buttons, not free text), and every question must include an "Other" option so the user can type their own answer. Questions should be simple and cover: who they are, their title/role, their objective on LinkedIn, their experience level, and their preferred tone. Save all answers to `inputs/user_profile.md` as a plain Markdown file (not JSON).
+
+`agent_2_research_calendar.md` — reads `inputs/user_profile.md`. Asks the user "How many pieces of content?" with options 3, 5, 7, and "Other" — default scope is 7 days. Does industry research and generates a content calendar. Output includes:
+- Viral hooks
+- Industry research notes saved to `outputs/research_notes.md`
+- A content calendar saved to `outputs/content_calendar.md`
+- Each individual post saved as its own file in `outputs/posts/` (e.g. `post_01.md`, `post_02.md`, etc.)
+
+`agent_3_image_gen.md` — optional. By default, builds a simple HTML template per post and exports it to PNG (no API keys required), saved to `outputs/images/`. Must clearly tell the user that if they want higher-quality/branded images, they need to supply their own image-generation API key.
+
+`agent_4_post_test.md` — picks one post from the generated batch and runs a test pass on it (checks hook strength, formatting, length), logs the result to `outputs/test_log.md`.
+
+Before creating any files, show the proposed architecture, workflow, folders, and outputs for approval. Do not execute any agent — only scaffold the files and folder structure. Do it in the local folder.
+
+Keep it as crisp as this brief, without overcomplicating it.
 ```
 
 # Prompt 2
 ```
-I want you to do an analysis for me where you can look at the the customers and transactions table and be able to provide me a quick summary of what are the top selling products and within the top selling products, the top five customers that have purchased those products. Okay? And I want you to be creating a simple CSV file and save it in this folder. or Excel file. Excel file is better.
+Activate Agent 1
 ```
 
 # Prompt 3
 ```
-I want you to create an agent one dot analysis, uh, MD file, which is going to, uh, store all the relevant details and also store the exact query that was required to produce this Excel file so that I can repeat or rerun this analysis. 
+Activate Agent 1
 ```
 
 # Prompt 4
 ```
-I want you to create a live dashboard based on these two tables. A KPI dashboard. You're gonna call this a KPI dashboard, which will show, uh, the numb... the total number of transactions, uh, you know, the the sum of revenue, some of units, and all the most important metrics. Right? And then it will show a graph, uh, you know, um, month on month graph of the sales units and whatever metrics that we have here, and you'll do a, like, on one page, you'll, like, on on on one row, you'll have two charts only maximum. Okay? And ensure that the connection is live. Right? And this should be a HTML report.
+Activate Agent 3
 ```
 
 # Prompt 5
 ```
-now deploy this html report to vercel
+Activate Agent 4
 ```
 
 # Prompt 6
 ```
-So I I have a invoices folder. What I wanted to do is right now, I wanted to read the invoices and create a CSV file and then I want you to then upload that. create a new table in Superbase and then upload that CSV file there so that I can access it live
+Crate a Schedule post each one content every day at 11AM and move to completed folder
 ```
