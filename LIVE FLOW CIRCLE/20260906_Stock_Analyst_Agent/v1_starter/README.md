@@ -6,7 +6,7 @@ A multi-agent stock review system built in Claude Cowork. Five agents read your 
 
 ## Step 1 — Scaffolding - Set up the folder
 
-Create one empty folder on your computer. Call it `ai-portfolio-analyst`. Select it in Claude Cowork.
+Create one empty folder on your computer. Call it `PortfolioAnalyst`. Select it in Claude Cowork.
 
 Paste this prompt. Run it once.
 
@@ -25,7 +25,7 @@ First create `CLAUDE.md` with:
 
 Agents:
 - `agent_1_framework.md` — read the stock file and create the analysis framework, required columns, parameters, scoring tables, and decision structure.
-- `agent_2_technical.md` — research 3–5 technical parameters for every stock and return actual values, scores out of 10, and sources.
+- `agent_2_technical.md` — research 3–5 technical parameters for every stock and return actual values, scores out of 10, and sources. This should be an Excel file. 
 - `agent_3_fundamental.md` — research 3–5 fundamental parameters for every stock and return actual values, scores out of 10, and sources.
 - `agent_4_sentiment.md` — research key sentiment/news parameters for every stock and return actual values, scores out of 10, and sources.
 - `agent_5_decision.md` — combine all agent outputs, calculate overall scores, apply the decision rules, and update the final Excel output.
