@@ -6,17 +6,11 @@ A multi-agent stock review system built in Claude Cowork. Five agents read your 
 
 ---
 
-## Step 1 — Connect a folder
+## Step 1 — Set up the folder
 
 Create one empty folder on your computer. Call it `ai-portfolio-analyst`. Connect it in Cowork.
 
-Put `portfolio_state_starter_template.xlsx` inside it. That's it — the next prompt builds everything else.
-
----
-
-## Step 2 — Setup
-
-Paste this into Cowork. Run it once.
+Paste this prompt. Run it once.
 
 ```
 Set up a multi-agent stock analysis system in this folder.
@@ -24,10 +18,14 @@ Do not analyse any stocks yet. Only create the folders and instruction files.
 
 ## CREATE THESE FOLDERS
 
-  01_starter_template/   Input. Move the starter template .xlsx here.
+  01_starter_template/   Input. The Excel template will be placed here.
   02_output/             Output. Everything you generate goes here.
   03_archive/            Archive. Superseded files go here.
   04_dashboard/          Dashboard. The HTML dashboard goes here.
+
+The Excel template does not exist yet. I will download it and put it in
+01_starter_template/ after this prompt finishes. Do not create one, and do
+not look for it now.
 
 ## THREE RULES — these override anything I say later
 
@@ -50,11 +48,28 @@ to 02_output/raw_cache_<YYYYMMDD>.json. Agent 03 computes every indicator
 from that cache in Python and never calls the API. If today's cache already
 exists, Agent 02 reuses it and makes zero calls.
 
+## THE FILE EVERY AGENT WORKS ON
+
+01_starter_template/portfolio_state_starter_template.xlsx
+Sheet "Portfolio State". Header in row 4, data from row 5. Twenty columns:
+
+  A Ticker              H Current Date        O Fundamental Detail
+  B Company             I Current Price ($)   P Final Decision
+  C Position Status     J Change ($)          Q Confidence (1-5)
+  D Last Review Date    K Change (%)          R Rationale
+  E Reference Price ($) L Technical View      S Updated Status
+  F Previous Decision   M Technical Detail    T Decision Timestamp
+  G Previous Notes      N Fundamental View
+
+C, F and G are filled in by me. D and E come pre-filled. J and K are
+formulas — read them, never overwrite them with values. Row 5 is a greyed
+EXAMPLE row that I delete before the first run.
+
 ## CREATE CLAUDE.md
 
 Containing: purpose, the three rules verbatim, the stock list, the API
-budget, the agent table, and the disclaimer that this is a classroom
-exercise and not investment advice.
+budget, the column list above, the agent table, and the disclaimer that
+this is a classroom exercise and not investment advice.
 
 ## CREATE FIVE AGENT FILES IN agents/
 
@@ -77,41 +92,51 @@ Each file uses exactly these headings:
 ## WHAT EACH AGENT DOES
 
 Agent 01 — Read previous state
-  Reads the newest workbook in 02_output/, or the starter template if none
-  exists. Reports each stock's previous decision, reference price and last
-  review date. If a field is blank, says so and asks me. Never guesses.
+  First, check that 01_starter_template/portfolio_state_starter_template.xlsx
+  exists. If it does not, STOP and tell me to download it and put it there.
+  Do not create a replacement.
+  Then read the newest workbook in 02_output/, or the starter template if
+  02_output/ is empty. Report each stock's previous decision, reference
+  price and last review date. If column C, F or G is blank, say which stocks
+  are missing them and ask me. Never guess.
 
 Agent 02 — Fetch market data
-  One API call per ticker. Saves the raw cache. Reports calls used and
-  budget remaining. Writes Current Date and Current Price.
+  One API call per ticker. Save the raw cache. Report calls used and budget
+  remaining. Write columns H and I.
 
 Agent 03 — Analysis
-  Reads the cache only. Computes in Python: 20 and 50-day moving averages,
+  Read the cache only. Compute in Python: 20 and 50-day moving averages,
   RSI(14), MACD, 20-day support and resistance, volume trend, 1-month
-  momentum. Assigns Bullish / Neutral / Bearish. Then assesses growth,
-  margins, valuation and risks and assigns Strong / Solid / Weak. Shows the
-  numbers behind both. Says "insufficient history" instead of guessing.
+  momentum. Write columns L and M. Then assess growth, margins, valuation
+  and risks and write columns N and O. Show the numbers behind both. Say
+  "insufficient history" instead of guessing.
 
 Agent 04 — Decide and update
-  Combines the two views into Buy / Hold / Sell plus confidence 1-5 and a
-  written rationale. Publishes the combination rule as a table so I can
-  audit it. Then carries this run backward into the previous-state columns:
-  Current Date to Last Review Date, Current Price to Reference Price, Final
-  Decision to Previous Decision, Rationale to Previous Notes. Writes the
-  timestamp.
+  Combine the two views into Buy / Hold / Sell plus confidence 1-5 and a
+  written rationale — columns P, Q, R. Publish the combination rule as a
+  table so I can audit it. Then carry this run backward: H into D, I into E,
+  P into F, R into G. Write S and T.
 
 Agent 05 — Save
-  Writes 02_output/portfolio_state_<YYYYMMDD>.xlsx and moves the superseded
-  copy to 03_archive/. Recalculates and confirms zero formula errors. Builds
-  a self-contained HTML dashboard at 04_dashboard/dashboard_<YYYYMMDD>.html
+  Write 02_output/portfolio_state_<YYYYMMDD>.xlsx and move the superseded
+  copy to 03_archive/. Recalculate and confirm zero formula errors. Build a
+  self-contained HTML dashboard at 04_dashboard/dashboard_<YYYYMMDD>.html
   showing decision counts, one card per stock, and every decision that
-  changed since last run.
+  changed since the last run.
 
 ## THEN
 
 Show me the folder tree and the five activation phrases. Do not analyse
 any stocks.
 ```
+
+---
+
+## Step 2 — Download the template
+
+Download **`portfolio_state_starter_template.xlsx`** from this repository and put it in the `01_starter_template/` folder that Step 1 just created.
+
+Open it. The first tab tells you what to fill in — three yellow columns, then save and close.
 
 ---
 
@@ -157,7 +182,7 @@ Activate Agent 05
 
 ## Running it again
 
-Repeat Steps 3 to 7. Nothing else. Agent 04 fills in the previous-state columns for you, so every run after the first is a review of the last one.
+Repeat Steps 3 to 7. Nothing else. Agent 04 fills the yellow columns for you, so every run after the first is a review of the last one.
 
 ---
 
