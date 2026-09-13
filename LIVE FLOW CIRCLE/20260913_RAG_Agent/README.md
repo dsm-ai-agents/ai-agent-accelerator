@@ -214,3 +214,9 @@ Using nexaflow_knowledge_base/index.md, answer: How should I respond if a prospe
 ```text
 Using nexaflow_knowledge_base/index.md, answer: A customer says Enterprise costs $85 per user per month. Are they right? Cite the files you used.
 ```
+
+
+# Prompt for creating a user interface
+```
+Okay. So now I want you to create a a a user interface where I can provide this chat application to my team members as an independent web application where they can type and get responses based on the knowledge base that we have. Right? So create... can you create a a a, first of all, prototype? Quick prototype that we can use it where I can just type and get an an an an the the answer. You can also convert it into an artifact which, uh, which is, like, demo able shareable. Okay. So first, give me the plan, and then I'll approve the new create it.
+```
