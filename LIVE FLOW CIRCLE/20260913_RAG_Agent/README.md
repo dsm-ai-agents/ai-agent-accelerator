@@ -1,158 +1,216 @@
-# Exercise: Build an Agentic RAG Knowledge Base — NexaFlow Technologies
+# Simple NexaFlow Knowledge Base Demo
 
-`nexaflow_docs/` holds 25 internal Markdown documents for **NexaFlow Technologies**, a fictional B2B SaaS company selling a workflow automation and AI operations platform. The documents cover five areas — Product, Pricing, Implementation, Case Studies and Sales — and are deliberately messy: they overlap, cross-reference each other, and one of them contains **outdated prices**.
+## Purpose
 
-You will turn this folder into an indexed knowledge base, then use it as a RAG agent that follows this flow:
+This is the simplest version of the RAG demonstration.
 
+The starting point is a folder containing 25 internal Markdown (`.md`) documents
+for **NexaFlow Technologies**, a fictional B2B SaaS company that sells a workflow
+automation and AI operations platform. The documents cover product, pricing,
+implementation, customer case studies and sales. The files are numbered `01`
+through `25`.
+
+The team then runs **one prompt**. The agent reads the documents, normalizes
+their metadata, identifies the natural knowledge categories, creates the
+knowledge-base folders and indexes, and moves the files into the appropriate
+folders.
+
+## Starting folder
+
+```text
+nexaflow_knowledge_base/
+├── 01_product_overview.md
+├── 02_feature_matrix.md
+├── 03_integration_guide.md
+├── ...
+└── 25_demo_script.md
 ```
-Question → Read root index → Pick folder → Read folder index → Open only 2–3 files → Answer with citations
-```
 
-**How to use:** Point Claude (Cowork / Claude Code) at the folder containing `nexaflow_docs/`. Run the prompts below **one by one, in order**. Start a new chat only where the step says so.
+## The one prompt
 
+Point the agent at the `nexaflow_knowledge_base` folder and paste this prompt:
+
+```text
+You are a company knowledge-base organizer.
+
+CONTEXT
+The current folder contains 25 internal Markdown documents for NexaFlow
+Technologies, a B2B SaaS company selling a workflow automation and AI operations
+platform. The documents cover product, pricing, implementation, case studies and
+sales. Some documents overlap, and some contain outdated or historical
+information. Build a simple, navigable knowledge base from these files.
+
+OBJECTIVE
+Read the Markdown documents, classify them by their dominant business purpose,
+normalize their metadata, organize them into useful folders, and create indexes
+that another LLM can use for index-first retrieval.
+
+WORKFLOW
+1. Inventory every Markdown document in the current folder.
+2. Read each document sufficiently to identify its title, document type,
+   dominant purpose, version, status, last-updated date, whether it is
+   authoritative, the questions it answers, and its important topics.
+3. Normalize the YAML front matter at the top of each document using the shape
+   below. Keep existing correct values. Do not change the body text while
+   adding metadata.
+4. Infer a small and practical taxonomy from the actual documents. Prefer
+   approximately 4 to 6 non-overlapping main categories. Do not invent a
+   category before examining the corpus.
+5. Assign every document exactly one main category. A document may have several
+   secondary topics and RAG tags.
+6. Create one filesystem-safe folder for each main category.
+7. Move each document into its assigned category folder. Preserve its document
+   ID and filename.
+8. Create an index.md inside every category folder.
+9. Create a root index.md that routes questions to the correct category index.
+10. Validate all links, metadata, document counts, and file locations.
+
+USE THIS YAML SHAPE
+---
+document_id: "NEXA-001"
+title: "Full document title"
+document_type: "Guide, Policy, Price List, FAQ, Case Study, Template, or other"
+main_category: "One primary category"
+secondary_topics:
+  - "Topic one"
+  - "Topic two"
+rag_tags:
+  - "lowercase-kebab-case-tag"
+  - "another-search-tag"
+version: "Version number"
+status: "Current, Historical, Draft, or Unknown"
+last_updated: "YYYY-MM-DD or Unknown"
+authoritative: "Yes or No"
+supersedes: "Older document or version this replaces, or None"
+contains_outdated_information: "Yes or No"
+related_documents:
+  - "NN_filename.md"
+summary: "One or two factual sentences describing the document"
+key_topics:
+  - "Important fact, figure, or process covered"
+use_when: "The kinds of questions this document should answer"
 ---
 
-## Step 1 — Scan the Metadata Only
+METADATA RULES
+- Use only facts supported by the document.
+- Use "Unknown" when a value cannot be established.
+- If a document contains historical or outdated figures, set
+  contains_outdated_information to "Yes" and name the current authoritative
+  document in the summary.
+- Keep main_category broad enough to contain multiple related documents.
+- Put granular concepts in secondary_topics, key_topics, and rag_tags.
+- Use lowercase kebab-case for rag_tags.
+- Keep summaries factual and neutral.
 
-```
-The nexaflow_docs folder contains 25 Markdown files. Do NOT read the full content of every file.
+EACH CATEGORY INDEX.MD MUST CONTAIN
+- Category name and plain-language description.
+- Types of questions that should be routed to the category.
+- A Markdown table listing every document in the folder.
+- For each document: document ID, title, document type, version, status,
+  authoritative flag, important topics, and a relative Markdown link.
+- Useful search terms and RAG tags.
+- Important overlaps with other categories, if any.
+- Any version conflicts inside the category and which document wins.
+- An instruction to open the underlying document before answering questions
+  that need exact figures, steps, or timelines.
 
-For each file, read only the "Metadata" section at the top and give me one table with these columns:
-File Name | Category | Document Type | Version | Status | Last Updated | Authoritative
+THE ROOT INDEX.MD MUST CONTAIN
+- A short explanation of the knowledge base.
+- The total document count and category count.
+- A category-routing table containing the category name, purpose, example
+  questions, document count, and relative link to its index.md.
+- A compact document directory listing all documents and their locations.
+- Cross-category routing guidance.
+- A version-control section naming the authoritative source for any topic where
+  documents disagree.
+- The following retrieval procedure:
+  1. Read the root index.md.
+  2. Select the most relevant category or categories.
+  3. Read the selected category index.md.
+  4. Select the smallest relevant set of documents (usually 2 to 3).
+  5. Prefer documents that are authoritative and current.
+  6. Read the selected documents.
+  7. Answer using document-supported facts and cite the document ID, filename,
+     and relevant section.
+  8. If the answer is not in the knowledge base, say so instead of guessing.
+- A warning not to treat index summaries as a substitute for the document text.
 
-Below the table, point out:
-- Any file that is marked as NOT authoritative.
-- Any file whose status mentions historical or outdated content.
-```
+SAFETY AND QUALITY RULES
+- Never fabricate a price, date, metric, feature, or policy.
+- Never present historical or outdated information as current.
+- Preserve the original document body text.
+- Do not delete source content.
+- If classification is uncertain, choose the best-supported main category and
+  record the uncertainty in the category index.
+- Use relative Markdown links.
+- Use deterministic, filesystem-safe folder names.
+- Resolve duplicate document IDs before completing the task.
+- Confirm that every inventoried document appears exactly once in the organized
+  knowledge base.
+- Report missing, unreadable, duplicated, or conflicting files.
 
----
-
-## Step 2 — Build the Knowledge Base
-
-```
-Read every file in the nexaflow_docs folder and build a small knowledge base that another AI agent can navigate quickly.
-
-1. Create a new folder called "knowledge_base" next to nexaflow_docs.
-2. Inside it, create one sub-folder per category: product, pricing, implementation, case_studies, sales.
-3. Copy each Markdown file into the correct sub-folder. Do NOT change the text of any file. Do NOT modify or delete the originals in nexaflow_docs.
-4. Inside each sub-folder, create an index.md with a table listing every file in that folder:
-   File | 1–2 sentence factual summary | Version | Status | Authoritative | Keywords | Use When
-5. Create a root knowledge_base/index.md that contains:
-   - A one-paragraph description of the company and the knowledge base.
-   - A table of the 5 categories with a link to each folder's index.md and the types of questions that belong there.
-   - An "Intent Routing" section with 2–3 example questions per category.
-   - A "Version Control" section that names the authoritative source for prices and flags any file that contains outdated information.
-
-The goal is to help another AI agent find the smallest set of correct files before answering a question.
-```
-
----
-
-## Step 3 — Verify the Knowledge Base
-
-```
-Check the knowledge_base folder you just created and report:
-
-1. Are all 25 files present, each in exactly one category folder?
-2. Is the content of every copied file identical to the original in nexaflow_docs?
-3. Does every link in the root index.md and in each folder index.md point to a file that exists?
-4. Are there any facts that conflict across files (for example different prices or timelines)? For each conflict, say which file is authoritative and whether the index already flags it.
-
-Fix anything that is broken or missing in the index files, then show me the final root index.md.
-```
-
----
-
-## Step 4 — Write the Retrieval Agent Instructions
-
-```
-Create a file called knowledge_base/AGENT_INSTRUCTIONS.md that tells an AI agent exactly how to answer questions using this knowledge base.
-
-The instructions must enforce this workflow:
-1. Always read knowledge_base/index.md first.
-2. Identify the intent of the question and choose the most relevant category folder (or two folders if the question truly spans both).
-3. Read that folder's index.md.
-4. Open only the 2–3 most relevant files. Never open every file.
-5. Prefer files marked "Authoritative: Yes" and the latest version. Ignore content marked historical or outdated unless the question is explicitly about history.
-6. Answer only from the files opened. If the answer is not in the knowledge base, say so clearly — do not guess.
-7. End every answer with a "Sources" list of the exact file paths used.
-8. Before the answer, show a short "Retrieval Path": intent detected → folder chosen → files opened → files deliberately skipped.
-
-Keep the instructions short and clear.
-```
-
----
-
-## Step 5 — Test: Implementation Question
-
-**Start a new chat.** (Steps 5–11 can all run in this same new chat.)
-
-```
-Follow the rules in knowledge_base/AGENT_INSTRUCTIONS.md exactly.
-
-Question: "What is the onboarding process and typical timeline for an enterprise customer?"
+FINAL RESPONSE
+After completing the work, report:
+- Number of documents inventoried.
+- Number of documents organized.
+- Categories created and their document counts.
+- Version conflicts found and which document is authoritative.
+- Files that need human review.
+- Validation errors or unresolved uncertainties.
+- Path to the root index.md.
 ```
 
----
+## Expected result
 
-## Step 6 — Test: Pricing Question
+The exact category names should be derived from the 25 documents. A typical
+result will look like this:
 
-```
-Follow the rules in knowledge_base/AGENT_INSTRUCTIONS.md exactly.
-
-Question: "What does the Enterprise plan cost, and are annual discounts available?"
-```
-
----
-
-## Step 7 — Test: Product Question
-
-```
-Follow the rules in knowledge_base/AGENT_INSTRUCTIONS.md exactly.
-
-Question: "Does the platform support APIs, SSO, audit logs and role-based access? Which plans include them?"
-```
-
----
-
-## Step 8 — Test: Case Study Question
-
-```
-Follow the rules in knowledge_base/AGENT_INSTRUCTIONS.md exactly.
-
-Question: "Have we helped a manufacturing company reduce manual work? Give me the numbers and how long the implementation took."
+```text
+nexaflow_knowledge_base/
+├── index.md
+├── product/
+│   ├── index.md
+│   └── ...
+├── pricing/
+│   ├── index.md
+│   └── ...
+├── implementation/
+│   ├── index.md
+│   └── ...
+├── case-studies/
+│   ├── index.md
+│   └── ...
+└── sales/
+    ├── index.md
+    └── ...
 ```
 
----
+## Test it
 
-## Step 9 — Test: Sales Question
+Start a new chat and ask a question:
 
-```
-Follow the rules in knowledge_base/AGENT_INSTRUCTIONS.md exactly.
-
-Question: "How should I respond if a prospect says the solution is too expensive? How much discount am I allowed to offer without approval?"
+```text
+Using nexaflow_knowledge_base/index.md, answer: What is the onboarding process and typical timeline for an enterprise customer? Cite the files you used.
 ```
 
----
+More questions to try:
 
-## Step 10 — Test: The Version-Control Trap
-
-```
-Follow the rules in knowledge_base/AGENT_INSTRUCTIONS.md exactly.
-
-Question: "A customer says our Enterprise plan costs $85 per user per month. Are they right?"
-
-In your answer, explain which file contains the $85 figure, why it is not the current price, and which file you treated as the source of truth.
+```text
+Using nexaflow_knowledge_base/index.md, answer: What does the Enterprise plan cost, and are annual discounts available? Cite the files you used.
 ```
 
----
-
-## Step 11 — Test: Cross-Folder and Out-of-Scope Questions
-
+```text
+Using nexaflow_knowledge_base/index.md, answer: Does the platform support SSO, audit logs and role-based access? Cite the files you used.
 ```
-Follow the rules in knowledge_base/AGENT_INSTRUCTIONS.md exactly. Answer these two questions separately, each with its own Retrieval Path and Sources.
 
-Question A: "A 3,000-person healthcare provider needs HIPAA compliance. Roughly how long will onboarding take, and do we have a similar customer we can reference?"
+```text
+Using nexaflow_knowledge_base/index.md, answer: Have we helped a manufacturing company reduce manual work? Cite the files you used.
+```
 
-Question B: "What is NexaFlow's refund policy if a Starter customer cancels in the middle of a month?"
+```text
+Using nexaflow_knowledge_base/index.md, answer: How should I respond if a prospect says the solution is too expensive? Cite the files you used.
+```
+
+```text
+Using nexaflow_knowledge_base/index.md, answer: A customer says Enterprise costs $85 per user per month. Are they right? Cite the files you used.
 ```
