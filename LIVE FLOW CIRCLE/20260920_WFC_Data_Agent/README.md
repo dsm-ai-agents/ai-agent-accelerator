@@ -1,12 +1,12 @@
-# Supabase Data Agent
+# Data Analyst Agent
 
-Four agents. They read your Supabase data, explain it, chart it, and put it online.
+Four agents. They read your eCommerce Store data, explain it, chart it, and put it online.
 
-You run one big prompt to set everything up. Then you type `Activate Agent 1`, `Activate Agent 2`, `Activate Agent 3`, `Activate Agent 4`, one at a time.
+You run one delegation prompt to set everything up. Then you type `Activate Agent 1`, `Activate Agent 2`, `Activate Agent 3`, `Activate Agent 4`, one at a time.
 
 ## Dataset
 
-Supabase project: `Weekly_Flow_Circle`
+Project: `eCommerce`
 Connect with: Supabase connector and Vercel connector in Claude
 
 **tbl_customers** (1,000 rows)
@@ -19,7 +19,34 @@ The two tables join on `Customer_ID`. Data covers March 2021 to March 2023.
 
 ---
 
-## Master Prompt
+## V1 - Delegation Prompt
+```
+Create a four-agent e-commerce reporting pipeline using the `eCommerce` database connected through Supabase MCP.
+
+Important rules:
+
+* Use read-only queries.
+* Quote mixed-case column names.
+* Convert `"Date_of_Purchase"` from `DD-MM-YYYY`.
+* Join the customer and transaction tables using `"Customer_ID"`.
+* Never expose customer names, emails, or phone numbers.
+
+First, propose the architecture, workflow, folders, agent responsibilities, and outputs for my approval.
+
+After approval, create `CLAUDE.md` and these agents:
+
+* `agent1.md` — explore, clean, join, and validate the data.
+* `agent2.md` — produce KPIs, trends, segments, exceptions, and business insights.
+* `agent3.md` — build a single-file offline HTML dashboard.
+* `agent4.md` — validate privacy and deploy the dashboard through the Vercel connector after my approval.
+
+Agents must share results through files, not chat. Give every agent clear inputs, steps, outputs, rules, completion criteria, and escalation instructions.
+
+Create files only. Do not run any agent. After creation, show the folder tree and wait for `Activate Agent 1`.
+
+```
+
+## V2 Detailed Prompt
 
 Paste this once. It builds everything and then stops.
 
@@ -27,7 +54,7 @@ Paste this once. It builds everything and then stops.
 Role: You are a data analyst setting up a four-agent workflow in this folder.
 
 Context:
-My data is in the Supabase project "Weekly_Flow_Circle", schema public, connected through the Supabase MCP connector. There are two tables:
+My data is in the eCommerce, schema public, connected through the Supabase MCP connector. There are two tables:
 
 tbl_customers, 1000 rows, primary key Customer_ID
   Customer_ID, Customer_Name, Customer_Email, Customer_Number, Age, Gender, Location
