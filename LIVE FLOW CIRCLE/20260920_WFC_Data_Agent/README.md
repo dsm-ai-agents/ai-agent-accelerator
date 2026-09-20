@@ -89,6 +89,16 @@ Set up the project. Create files only. Do not run any agent yet.
      - Flag anything that looks wrong: nulls, zero or negative prices, discounts bigger than the sale.
      - Answer anything I put in input/.
    Outputs: output/summary.md and output/summary.json with the same numbers in both.
+   summary.json must use exactly this shape, because Agent 3 reads these exact keys:
+     {
+       "kpis": { "revenue": 0, "transactions": 0, "customers": 0, "avg_order_value": 0, "return_rate_pct": 0 },
+       "revenue_by_month":    [ { "label": "2021-03", "value": 0 } ],
+       "revenue_by_category": [ { "label": "Toys", "value": 0 } ],
+       "revenue_by_channel":  [ { "label": "Online", "value": 0 } ],
+       "revenue_by_payment":  [ { "label": "UPI", "value": 0 } ],
+       "top_products":        [ { "name": "Product name", "revenue": 0, "transactions": 0 } ]
+     }
+   Every value must be a plain number, not text. Supabase returns totals as text like "14623.75", so convert them. No currency symbols or commas inside the numbers. revenue_by_month must list every month in date order.
    Rules: every number comes from a query, never a guess; say which table each number came from; never name an individual customer; keep the opening summary under 150 words.
    Done When: both files exist, the numbers match, and the revenue formula is stated.
 
@@ -97,13 +107,23 @@ Set up the project. Create files only. Do not run any agent yet.
    Inputs: output/summary.json and output/schema.json.
    Steps:
      - Build one file, dashboard/index.html. Everything goes inside it: the HTML, the CSS, the JavaScript and the numbers. No build step, no server, no npm.
-     - Write the numbers from summary.json straight into the file as a JavaScript object, so the page never touches the database.
-     - Use a charting library from a CDN, loaded with a script tag.
-     - Build these six visuals: KPI cards (revenue, transactions, customers, average order value, return rate); revenue by month as a line; revenue by Product_Category as bars; Purchase_Channel split; Mode_of_Payment split; top products as a table.
-     - Open the file in a browser and check every chart shows data.
+     - Do not use any charting library and do not load anything from a CDN or the internet. If that script fails to load, every chart goes blank. Draw the charts yourself with plain HTML, CSS and SVG:
+         bar charts: one row per item, a div bar whose width is a percentage of the largest value, with the label and the number beside it
+         monthly trend: an SVG polyline, with the first and last month labelled under it
+     - Do not use fetch() and do not load summary.json from disk. Browsers block that when a file is opened by double-clicking, and the page comes out blank. Instead, copy the full contents of output/summary.json into the file as: const DATA = { ... };
+       Write out every value. No placeholders, no "...", no comments like "add the remaining months here".
+     - Read only these keys from DATA: kpis, revenue_by_month, revenue_by_category, revenue_by_channel, revenue_by_payment, top_products.
+     - Build these six visuals: KPI cards (revenue, transactions, customers, average order value, return rate); revenue by month as a line; revenue by Product_Category as bars; Purchase_Channel as bars; Mode_of_Payment as bars; top products as a table.
+     - Wrap the code for each visual in its own try/catch. If a visual fails or its data is empty, write a red message inside that card saying what is missing. A card must never be silently blank, and one broken chart must not stop the others.
+     - Before you say you are done, read dashboard/index.html back and check all of these:
+         there is no <script src= tag and no fetch( anywhere in the file
+         DATA contains all six keys, and every list in it has at least one item
+         revenue_by_month has the same number of months as summary.json
+         every key the drawing code reads exists in DATA with the same spelling
+       Fix anything that fails, then check again. If you can open the file in a browser, do that too and confirm every card shows data.
    Outputs: dashboard/index.html and output/dashboard_notes.md telling me what each visual shows.
-   Rules: one file only; no Supabase keys anywhere in it; no customer names, emails or phone numbers; it must work by double-clicking the file.
-   Done When: double-clicking dashboard/index.html opens a page with every chart filled in.
+   Rules: one file only; no external scripts, no CDN, no fetch; no Supabase keys anywhere in it; no customer names, emails or phone numbers; it must work by double-clicking the file with no internet.
+   Done When: all the checks above pass and double-clicking dashboard/index.html opens a page with every card filled in.
 
    agents/agent4.md - Put it online
    Purpose: deploy the dashboard to Vercel using the Vercel connector in Claude.
