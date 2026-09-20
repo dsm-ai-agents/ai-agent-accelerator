@@ -144,19 +144,19 @@ Show me the folder tree, confirm each agent file in one line, then wait for me t
 Run these one at a time. Check the output files exist before moving on.
 
 ```
-ActivateAgent1
+Activate Agent 1
 ```
 
 ```
-ActivateAgent2
+Activate Agent 2
 ```
 
 ```
-ActivateAgent3
+Activate Agent 3
 ```
 
 ```
-ActivateAgent4
+Activate Agent 4
 ```
 
 To start over:
