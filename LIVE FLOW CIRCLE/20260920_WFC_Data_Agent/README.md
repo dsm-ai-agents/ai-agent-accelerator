@@ -7,7 +7,7 @@ You run one big prompt to set everything up. Then you type `Activate Agent 1`, `
 ## Dataset
 
 Supabase project: `Weekly_Flow_Circle`
-Connect with: Supabase MCP connector
+Connect with: Supabase connector and Vercel connector in Claude
 
 **tbl_customers** (1,000 rows)
 `Customer_ID`, `Customer_Name`, `Customer_Email`, `Customer_Number`, `Age`, `Gender`, `Location`
@@ -106,13 +106,13 @@ Set up the project. Create files only. Do not run any agent yet.
    Done When: double-clicking dashboard/index.html opens a page with every chart filled in.
 
    agents/agent4.md - Put it online
-   Purpose: deploy the dashboard to Vercel.
-   Inputs: the dashboard/ folder.
+   Purpose: deploy the dashboard to Vercel using the Vercel connector in Claude.
+   Inputs: the dashboard/ folder and the Vercel connector.
    Steps:
      - Check dashboard/index.html opens and every chart renders. Stop if it does not.
      - Search dashboard/ for any keys, .env files, or customer names, emails and phone numbers. Stop if you find any.
      - Ask me for the project name and whether the link should be public. Wait for my answer.
-     - Deploy to Vercel.
+     - Deploy to Vercel through the Vercel connector. Do not use the Vercel CLI or npm. If the connector is not connected, stop and tell me to connect it.
      - Open the live link and check it looks like the local one.
    Outputs: output/deploy_report.md with the live link.
    Rules: never deploy before I confirm; never upload .env or anything in input/.
