@@ -2,7 +2,7 @@
 
 Four agents. They read your Supabase data, explain it, chart it, and put it online.
 
-You run one big prompt to set everything up. Then you type `ActivateAgent1`, `ActivateAgent2`, `ActivateAgent3`, `ActivateAgent4`, one at a time.
+You run one big prompt to set everything up. Then you type `Activate Agent 1`, `Activate Agent 2`, `Activate Agent 3`, `Activate Agent 4`, one at a time.
 
 ## Dataset
 
@@ -48,7 +48,7 @@ Set up the project. Create files only. Do not run any agent yet.
    - input is where I put questions for you. You only read it.
    - output is where every agent writes its results.
    - archive holds old runs.
-   - dashboard holds the dashboard app.
+   - dashboard holds the dashboard HTML file.
 
 2. Create CLAUDE.md with these rules:
    - Read only. Never INSERT, UPDATE, DELETE, DROP or ALTER.
@@ -93,23 +93,23 @@ Set up the project. Create files only. Do not run any agent yet.
    Done When: both files exist, the numbers match, and the revenue formula is stated.
 
    agents/agent3.md - Build the dashboard
-   Purpose: show the summary as charts on a page that runs on my laptop.
+   Purpose: show the summary as charts in a single HTML file I can open on my laptop.
    Inputs: output/summary.json and output/schema.json.
    Steps:
-     - Build a Next.js app in dashboard/.
-     - Put the numbers in dashboard/data.json, copied from summary.json. The page reads that file, so the browser never touches the database.
+     - Build one file, dashboard/index.html. Everything goes inside it: the HTML, the CSS, the JavaScript and the numbers. No build step, no server, no npm.
+     - Write the numbers from summary.json straight into the file as a JavaScript object, so the page never touches the database.
+     - Use a charting library from a CDN, loaded with a script tag.
      - Build these six visuals: KPI cards (revenue, transactions, customers, average order value, return rate); revenue by month as a line; revenue by Product_Category as bars; Purchase_Channel split; Mode_of_Payment split; top products as a table.
-     - Install what you need, start it, and open it to check every chart shows data.
-     - Run npm run build and fix anything that fails.
-   Outputs: a working dashboard/ and output/dashboard_notes.md telling me how to start it.
-   Rules: no Supabase keys in the dashboard; no customer names, emails or phone numbers in data.json; one page; the build must pass.
-   Done When: the page opens on localhost with every chart filled in, and npm run build passes.
+     - Open the file in a browser and check every chart shows data.
+   Outputs: dashboard/index.html and output/dashboard_notes.md telling me what each visual shows.
+   Rules: one file only; no Supabase keys anywhere in it; no customer names, emails or phone numbers; it must work by double-clicking the file.
+   Done When: double-clicking dashboard/index.html opens a page with every chart filled in.
 
    agents/agent4.md - Put it online
    Purpose: deploy the dashboard to Vercel.
    Inputs: the dashboard/ folder.
    Steps:
-     - Run npm run build. Stop if it fails.
+     - Check dashboard/index.html opens and every chart renders. Stop if it does not.
      - Search dashboard/ for any keys, .env files, or customer names, emails and phone numbers. Stop if you find any.
      - Ask me for the project name and whether the link should be public. Wait for my answer.
      - Deploy to Vercel.
@@ -134,7 +134,7 @@ Rules:
 - Do not make up credentials. If the Supabase connection is missing, tell me what to connect.
 
 Output:
-Show me the folder tree, confirm each agent file in one line, then wait for me to type ActivateAgent1.
+Show me the folder tree, confirm each agent file in one line, then wait for me to type Activate Agent 1.
 ```
 
 ---
